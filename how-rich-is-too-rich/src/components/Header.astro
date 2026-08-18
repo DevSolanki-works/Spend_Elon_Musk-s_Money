@@ -1,0 +1,21 @@
+---
+import { getRoutableCharacters } from "../lib/characters";
+const others = getRoutableCharacters();
+---
+
+<header class="border-b-2 border-line bg-void">
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+    <a href="/" class="flex items-center gap-2.5 font-display text-lg font-bold tracking-tight text-ink">
+      <span aria-hidden="true" class="ticket-stub flex h-7 w-7 items-center justify-center rounded font-display text-sm font-black">$</span>
+      How Rich Is Too Rich
+    </a>
+    <nav class="flex items-center gap-6 text-sm text-ink/70">
+      {others.map((c) => (
+        <a href={`/spend-${c.slug}-billions`} class="hidden transition-colors hover:text-pop-pink sm:inline">
+          {c.shortName}
+        </a>
+      ))}
+      <a href="/about" class="transition-colors hover:text-pop-pink">About</a>
+    </nav>
+  </div>
+</header>

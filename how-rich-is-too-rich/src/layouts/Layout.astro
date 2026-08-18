@@ -1,0 +1,135 @@
+---
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+export interface Props {
+  title: string;
+  description: string;
+  canonicalUrl: string;
+  ogImage?: string;
+  faqItems?: FaqItem[];
+}
+
+const {
+  title,
+  description,
+  canonicalUrl,
+  ogImage = '/og-image.png',
+  faqItems = [],
+} = Astro.props;
+
+const faqSchema =
+  faqItems.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqItems.map((f) => ({
+          '@type': 'Question',
+          name: f.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: f.answer,
+          },
+        })),
+      }
+    : null;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={canonicalUrl} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    {
+      faqSchema && (
+        <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+      )
+    }
+
+    <meta name="theme-color" content="#030712" />
+  </head>
+  <body class="bg-[#030712] text-slate-50 antialiased">
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  @import "tailwindcss";
+
+  :root {
+    --hud-bg: #030712;
+    --hud-panel: #0b1220;
+    --hud-emerald: #10b981;
+    --hud-cyan: #06b6d4;
+    --hud-white: #f8fafc;
+    --hud-orange: #f97316;
+    --hud-rose: #f43f5e;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .font-mono-hud {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* HUD corner-bracket utility, used on cards/panels for the mission-control feel */
+  .hud-corners {
+    position: relative;
+  }
+  .hud-corners::before,
+  .hud-corners::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-color: var(--hud-cyan);
+    opacity: 0.6;
+  }
+  .hud-corners::before {
+    top: -1px;
+    left: -1px;
+    border-top: 2px solid;
+    border-left: 2px solid;
+  }
+  .hud-corners::after {
+    bottom: -1px;
+    right: -1px;
+    border-bottom: 2px solid;
+    border-right: 2px solid;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>

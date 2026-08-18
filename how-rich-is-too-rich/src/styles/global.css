@@ -1,0 +1,159 @@
+@import "tailwindcss";
+
+/*
+  DESIGN SYSTEM v3 — "Carnival Poster"
+  Phase 2.5 round 2: v2 kept a dark near-black base, which still read as a
+  techy SaaS dashboard rather than a fun toy. v3 moves to a bright, warm
+  light background with bold black comic-style borders and hard colored
+  "sticker" shadows — closer to a game-show set or a carnival poster than
+  a product UI. Flat color only, still no gradients/glow/glassmorphism.
+
+  --void          #FFFBF2  main background — warm, bright, near-white cream
+  --void-raised   #FFFFFF  raised panel surface (cards, shop tiles)
+  --paper         #FFF4DE  receipt paper — warm ticket cream
+  --ink           #1A1508  near-black text + comic-style borders
+  --line          #1A1508  bold borders (reuses ink — this is the "outline" color)
+  --line-paper    #E3B95C  perforation / dashed lines on paper surfaces
+  --amber         #FFC630  primary accent — buy buttons, badges, ticket stubs
+  --credit        #16A34A  balance remaining, positive stats (deepened for light-bg contrast)
+  --debit         #E11D3C  overspend / danger (deepened for light-bg contrast)
+  --pop-pink      #E0328B  absurd-category / extra-fun accent (deepened for contrast)
+
+  Category accents (shop card badges + hard shadows) — kept vivid since
+  they sit on white card backgrounds, not as body text:
+  vehicles #3FA9F5 · real-estate #2FE3B4 · companies #B388FF
+  space #7C83FD · absurd #FF3D8F
+*/
+
+@theme {
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  --color-void: #fffbf2;
+  --color-void-raised: #ffffff;
+  --color-paper: #fff4de;
+  --color-ink: #1a1508;
+  --color-line: #1a1508;
+  --color-line-paper: #e3b95c;
+  --color-amber: #ffc630;
+  --color-credit: #16a34a;
+  --color-debit: #e11d3c;
+  --color-pop-pink: #e0328b;
+
+  --color-cat-vehicles: #3fa9f5;
+  --color-cat-real-estate: #2fe3b4;
+  --color-cat-companies: #b388ff;
+  --color-cat-space: #7c83fd;
+  --color-cat-absurd: #ff3d8f;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--color-void);
+  background-image: radial-gradient(circle at 1px 1px, rgba(26, 21, 8, 0.06) 1.5px, transparent 0);
+  background-size: 24px 24px;
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+/* Reusable perforated edge — receipt's signature "printed" element */
+.perforated-edge {
+  --hole: 10px;
+  height: var(--hole);
+  background-image: radial-gradient(
+    circle,
+    var(--color-void) calc(var(--hole) / 2 - 1px),
+    transparent calc(var(--hole) / 2)
+  );
+  background-size: calc(var(--hole) * 1.6) 100%;
+  background-position: center;
+}
+
+/* Hard "sticker" shadow utility — flat offset shadow, no blur. Color set
+   per-element via the --accent custom property. This + thick black borders
+   is the whole "comic poster, not SaaS dashboard" trick. */
+.brutal {
+  --accent: var(--color-ink);
+  box-shadow: 4px 4px 0 var(--accent);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.brutal:hover {
+  transform: translate(-2px, -2px) rotate(-0.6deg);
+  box-shadow: 6px 6px 0 var(--accent);
+}
+.brutal:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--accent);
+}
+
+.ticket-stub {
+  background: var(--color-amber);
+  color: var(--color-ink);
+  transform: rotate(-2deg);
+  box-shadow: 2px 2px 0 rgba(26, 21, 8, 0.5);
+}
+
+/* Small rotated "sticker" badges used around the hero for poster energy */
+.sticker {
+  display: inline-block;
+  transform: rotate(-3deg);
+  box-shadow: 3px 3px 0 var(--color-ink);
+}
+.sticker:nth-of-type(even) { transform: rotate(2.5deg); }
+
+.fun-link {
+  color: var(--color-ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--color-amber);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+.fun-link:hover {
+  text-decoration-color: var(--color-pop-pink);
+}
+
+@keyframes bump {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.14) rotate(-1deg); }
+  100% { transform: scale(1); }
+}
+.animate-bump { animation: bump 320ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px) rotate(-0.5deg); }
+  40% { transform: translateX(5px) rotate(0.5deg); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(3px); }
+}
+.animate-shake { animation: shake 420ms ease-in-out; }
+
+@keyframes receipt-print {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.receipt-line { animation: receipt-print 180ms ease-out; }
+
+@keyframes shimmer-in {
+  0% { opacity: 0; transform: scale(0.85) rotate(-4deg); }
+  60% { opacity: 1; transform: scale(1.05) rotate(2deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translate(-50%, 10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

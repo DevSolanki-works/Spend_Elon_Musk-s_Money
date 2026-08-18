@@ -1,0 +1,57 @@
+---
+import Layout from "../layouts/Layout.astro";
+const CONTACT_EMAIL = "dev.solanki.works@gmail.com";
+const lastUpdated = "August 17, 2026";
+---
+
+<Layout
+  title="Privacy Policy — How Rich Is Too Rich"
+  description="How Rich Is Too Rich privacy policy: what data we collect, how ads and analytics work, and your choices."
+  path="/privacy-policy"
+>
+  <article class="mx-auto max-w-2xl px-6 py-16 text-sm leading-relaxed text-ink/70">
+    <h1 class="font-display text-3xl font-bold text-ink">Privacy Policy</h1>
+    <p class="mt-2 text-xs text-ink/50">Last updated: {lastUpdated}</p>
+
+    <h2 class="mt-8 font-display text-lg font-semibold text-ink">The game itself</h2>
+    <p class="mt-3">
+      How Rich Is Too Rich runs entirely in your browser. Your shopping choices, purchase log, and
+      any "high score" are stored only in your browser's local storage on your own device. None of
+      it is transmitted to us or any third party, and we don't ask you to create an account or
+      submit any personal information to play.
+    </p>
+
+    <h2 class="mt-8 font-display text-lg font-semibold text-ink">Advertising & analytics</h2>
+    <p class="mt-3">
+      This site may display ads served by Google AdSense and use Google Analytics to understand
+      traffic. These third parties may use cookies or similar technologies to serve ads based on
+      your prior visits to this and other websites, and to measure site usage. You can opt out of
+      personalized advertising by visiting
+      <a href="https://adssettings.google.com" class="underline hover:text-pop-pink" target="_blank" rel="noopener">Google Ads Settings</a>
+      or <a href="https://www.aboutads.info/choices/" class="underline hover:text-pop-pink" target="_blank" rel="noopener">aboutads.info</a>.
+    </p>
+
+    <h2 class="mt-8 font-display text-lg font-semibold text-ink">Cookies</h2>
+    <p class="mt-3">
+      Advertising and analytics providers may set cookies in your browser. You can control or
+      delete cookies through your browser settings at any time.
+    </p>
+
+    <h2 class="mt-8 font-display text-lg font-semibold text-ink">Children's privacy</h2>
+    <p class="mt-3">
+      This site is not directed at children under 13 and we do not knowingly collect personal
+      information from children.
+    </p>
+
+    <h2 class="mt-8 font-display text-lg font-semibold text-ink">Changes to this policy</h2>
+    <p class="mt-3">
+      We may update this policy occasionally. Material changes will be reflected by updating the
+      "Last updated" date above.
+    </p>
+
+    <h2 class="mt-8 font-display text-lg font-semibold text-ink">Contact</h2>
+    <p class="mt-3">
+      Questions about this policy: <a href={`mailto:${CONTACT_EMAIL}`} class="font-mono text-amber underline">{CONTACT_EMAIL}</a>
+    </p>
+  </article>
+</Layout>

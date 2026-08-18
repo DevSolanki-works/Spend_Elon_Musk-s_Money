@@ -1,0 +1,606 @@
+---
+import shopItems from "../data/shop-items.json";
+import type { Character } from "../lib/characters";
+
+interface Props {
+  character: Character;
+}
+const { character } = Astro.props;
+
+const categories = [
+  { id: "all", label: "All" },
+  { id: "vehicles", label: "Vehicles" },
+  { id: "real-estate", label: "Real Estate" },
+  { id: "companies", label: "Companies" },
+  { id: "space", label: "Space" },
+  { id: "absurd", label: "Absurd" },
+] as const;
+
+// Per-category accent used for the shop card's badge + hard "sticker" shadow —
+// this is what makes the absurd items visually read as sillier than the
+// serious ones, per the design brief.
+const CATEGORY_COLORS: Record<string, string> = {
+  vehicles: "#3FA9F5",
+  "real-estate": "#2FE3B4",
+  companies: "#B388FF",
+  space: "#7C83FD",
+  absurd: "#FF3D8F",
+  secret: "#1A1508",
+};
+---
+
+<div id="game-root">
+  <script type="application/json" id="game-data" set:html={JSON.stringify({
+    slug: character.slug,
+    startingBalance: character.netWorth,
+    displayName: character.displayName,
+  })} />
+
+  <div class="grid gap-8 lg:grid-cols-[1.5fr_1fr] lg:items-start">
+    <!-- SHOP -->
+    <div>
+      <div class="mb-6 flex flex-wrap gap-2" id="category-tabs">
+        {categories.map((c, i) => (
+          <button
+            type="button"
+            data-category={c.id}
+            class:list={["tab-btn brutal rounded-full border-2 border-line px-4 py-1.5 font-display text-xs font-bold uppercase tracking-wide",
+              i === 0 ? "bg-amber text-ink" : "bg-void-raised text-ink/70"]}
+          >
+            {c.label}
+          </button>
+        ))}
+      </div>
+
+      <div id="shop-grid" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {shopItems.map((item) => (
+          <div
+            class="shop-card brutal flex min-h-[230px] flex-col gap-3 rounded-xl border-2 border-line bg-void-raised p-5"
+            style={`--accent:${CATEGORY_COLORS[item.category]}`}
+            data-id={item.id}
+            data-category={item.category}
+            data-name={item.name}
+            data-price={item.price}
+            data-blurb={item.blurb}
+          >
+            <div class="flex items-start justify-between gap-2">
+              <span
+                class="flex h-14 w-14 items-center justify-center rounded-lg text-3xl"
+                style={`background:${CATEGORY_COLORS[item.category]}2E`}
+                aria-hidden="true"
+              >
+                {item.emoji}
+              </span>
+              <span class="ticket-stub inline-block shrink-0 rounded px-2 py-1 font-mono text-xs font-bold" data-role="price"></span>
+            </div>
+            <span class="font-display text-sm font-bold leading-snug text-ink">{item.name}</span>
+            <div class="mt-auto flex items-center gap-2 pt-2">
+              <input
+                type="number"
+                min="1"
+                value="1"
+                inputmode="numeric"
+                class="qty-input w-16 rounded-md border-2 border-line bg-void px-2 py-1.5 text-center font-mono text-sm font-bold text-ink"
+                aria-label={`Quantity of ${item.name}`}
+              />
+              <button type="button" class="max-btn rounded-md border-2 border-line bg-void px-2 py-1.5 font-mono text-[10px] font-bold text-ink">
+                MAX
+              </button>
+              <button type="button" class="buy-btn brutal ml-auto rounded-md border-2 border-line bg-amber px-3.5 py-1.5 font-display text-xs font-bold text-ink">
+                Buy
+              </button>
+            </div>
+          </div>
+        ))}
+
+        <!-- Secret item slot — hidden until the easter egg is triggered (see script) -->
+        <div
+          id="secret-card"
+          class="shop-card brutal hidden min-h-[230px] flex-col gap-3 rounded-xl border-2 border-line bg-ink p-5"
+          style="--accent:#FFC630"
+          data-id="your-mama"
+          data-category="secret"
+          data-name="Your Mama"
+          data-blurb="Priceless. Literally — this costs everything you have left."
+        >
+          <div class="flex items-start justify-between gap-2">
+            <span class="flex h-14 w-14 items-center justify-center rounded-lg bg-white/10 text-3xl" aria-hidden="true">💀</span>
+            <span class="ticket-stub inline-block shrink-0 rounded px-2 py-1 font-mono text-xs font-bold" id="secret-price"></span>
+          </div>
+          <span class="font-display text-sm font-bold leading-snug text-white">Your Mama</span>
+          <button type="button" id="secret-buy-btn" class="brutal mt-auto w-full rounded-md border-2 border-line bg-amber px-3.5 py-2 font-display text-xs font-bold text-ink">
+            Buy (spend everything)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECEIPT -->
+    <div class="lg:sticky lg:top-6">
+      <div class="brutal bg-paper text-ink">
+        <div class="cursor-default select-none px-6 pb-3 pt-6 text-center" id="receipt-title-tap">
+          <p class="font-display text-sm font-bold uppercase tracking-widest">Spending Receipt</p>
+          <p class="mt-1 font-mono text-[11px] text-ink/60" id="receipt-subtitle">{character.displayName.toUpperCase()} FUNDS CO.</p>
+        </div>
+        <ul id="receipt-list" class="max-h-72 overflow-y-auto border-y-2 border-dashed border-line-paper px-6 py-3 font-mono text-xs">
+          <li class="py-4 text-center text-ink/40" id="receipt-empty">No purchases yet. Tap something ridiculous.</li>
+        </ul>
+        <div class="flex items-center justify-between px-6 py-3">
+          <span class="font-display text-xs font-bold uppercase">Balance</span>
+          <span class="font-mono text-xl font-bold" id="balance-display">—</span>
+        </div>
+        <p class="px-6 pb-4 font-mono text-[11px] font-bold uppercase tracking-wide text-pop-pink" id="spend-tier"></p>
+        <div class="perforated-edge"></div>
+      </div>
+
+      <button type="button" id="checkout-btn" class="brutal mt-4 w-full rounded-md border-2 border-line bg-amber px-4 py-3 font-display text-sm font-bold text-ink">
+        🧾 Checkout
+      </button>
+
+      <div class="mt-3 flex items-center justify-between">
+        <button type="button" id="reset-btn" class="font-mono text-xs text-ink/50 underline hover:text-pop-pink">
+          Reset
+        </button>
+        <p class="font-mono text-xs text-ink/40" id="best-score"></p>
+        <button type="button" id="sound-toggle" class="font-mono text-xs text-ink/50 hover:text-pop-pink" aria-label="Toggle sound">
+          🔊
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PURCHASE TOAST -->
+  <div id="toast" class="ticket-stub pointer-events-none fixed bottom-6 left-1/2 z-50 hidden -translate-x-1/2 rounded px-4 py-2 text-center font-display text-sm font-bold"></div>
+
+  <!-- CHECKOUT OVERLAY -->
+  <div id="checkout-overlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/70 p-6 backdrop-blur-sm">
+    <canvas id="confetti-canvas" class="pointer-events-none fixed inset-0 z-40"></canvas>
+    <div class="brutal relative z-50 w-full max-w-sm bg-paper p-7 text-ink">
+      <p class="font-mono text-xs font-bold uppercase tracking-widest text-debit" id="checkout-kicker">Checkout</p>
+      <h2 class="mt-1 font-display text-2xl font-bold" id="checkout-heading">Here's the damage.</h2>
+      <p class="mt-3 text-sm" id="checkout-summary"></p>
+      <ul class="mt-3 space-y-1 font-mono text-xs text-ink/70" id="checkout-comparisons"></ul>
+      <div class="mt-6 grid grid-cols-2 gap-2">
+        <button type="button" id="checkout-keep-shopping" class="brutal rounded-md border-2 border-line bg-void-raised px-4 py-2 font-display text-xs font-bold text-ink">
+          Keep shopping
+        </button>
+        <button type="button" id="checkout-start-over" class="brutal rounded-md border-2 border-line bg-void-raised px-4 py-2 font-display text-xs font-bold text-ink">
+          Start over
+        </button>
+        <button type="button" id="checkout-share" class="brutal col-span-2 rounded-md border-2 border-line bg-amber px-4 py-2 font-display text-sm font-bold text-ink">
+          📥 Download receipt
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .shop-card:disabled { opacity: 0.4; pointer-events: none; }
+  #secret-card:not(.hidden) { animation: shimmer-in 420ms ease-out; }
+  #toast.show { display: block; animation: toast-in 180ms ease-out; }
+  input[type="number"]::-webkit-inner-spin-button { opacity: 1; }
+</style>
+
+<script>
+  import {
+    createGameState, resetGame, purchaseItem, getTotalSpent, getMaxAffordableQty,
+    getItemCount, getTopPurchase, formatFullUSD, formatShortUSD, getComparisons,
+    getSpendTier, getElapsedSeconds,
+    type GameState, type ShopItem,
+  } from "../lib/gameEngine";
+  import shopItemsData from "../data/shop-items.json";
+
+  const dataEl = document.getElementById("game-data")!;
+  const { slug, startingBalance, displayName } = JSON.parse(dataEl.textContent || "{}") as {
+    slug: string; startingBalance: number; displayName: string;
+  };
+
+  // The secret item's price is always "everything you have left right now" —
+  // computed live at purchase time, not fixed, so it scales per character
+  // and always means what it says.
+  const shopItems: ShopItem[] = shopItemsData as ShopItem[];
+
+  let state: GameState = createGameState(startingBalance);
+  let displayedBalance = startingBalance;
+  let animFrame: number | null = null;
+  let soundOn = true;
+  let audioCtx: AudioContext | null = null;
+
+  const balanceEl = document.getElementById("balance-display")!;
+  const spendTierEl = document.getElementById("spend-tier")!;
+  const receiptList = document.getElementById("receipt-list")!;
+  const receiptEmpty = document.getElementById("receipt-empty")!;
+  const resetBtn = document.getElementById("reset-btn")!;
+  const bestScoreEl = document.getElementById("best-score")!;
+  const soundToggle = document.getElementById("sound-toggle")!;
+  const checkoutBtn = document.getElementById("checkout-btn")!;
+  const checkoutOverlay = document.getElementById("checkout-overlay")!;
+  const checkoutKicker = document.getElementById("checkout-kicker")!;
+  const checkoutHeading = document.getElementById("checkout-heading")!;
+  const checkoutSummary = document.getElementById("checkout-summary")!;
+  const checkoutComparisons = document.getElementById("checkout-comparisons")!;
+  const checkoutKeepShopping = document.getElementById("checkout-keep-shopping")!;
+  const checkoutStartOver = document.getElementById("checkout-start-over")!;
+  const checkoutShare = document.getElementById("checkout-share")!;
+  const confettiCanvas = document.getElementById("confetti-canvas") as HTMLCanvasElement;
+  const toast = document.getElementById("toast")!;
+  const gameRoot = document.getElementById("game-root")!;
+  const shopGrid = document.getElementById("shop-grid")!;
+  const secretCard = document.getElementById("secret-card") as HTMLDivElement;
+  const secretPriceEl = document.getElementById("secret-price")!;
+  const secretBuyBtn = document.getElementById("secret-buy-btn")!;
+  const receiptTitleTap = document.getElementById("receipt-title-tap")!;
+  const priceEls = shopGrid.querySelectorAll<HTMLElement>('[data-role="price"]');
+  const tabs = document.querySelectorAll<HTMLButtonElement>(".tab-btn");
+
+  priceEls.forEach((el) => {
+    const card = el.closest<HTMLElement>(".shop-card")!;
+    el.textContent = formatShortUSD(Number(card.dataset.price));
+  });
+
+  const bestKey = `hritr:${slug}:best-items-to-broke`;
+  function renderBestScore() {
+    try {
+      const best = localStorage.getItem(bestKey);
+      bestScoreEl.textContent = best ? `Best: ${best} buys` : "";
+    } catch {
+      bestScoreEl.textContent = "";
+    }
+  }
+  renderBestScore();
+
+  // --- Tiny dependency-free "cha-ching" using the Web Audio API — no asset,
+  // no network request, respects the mute toggle. ---
+  function playCoinSound() {
+    if (!soundOn) return;
+    try {
+      audioCtx ??= new (window.AudioContext || (window as any).webkitAudioContext)();
+      const now = audioCtx.currentTime;
+      [880, 1318.5].forEach((freq, i) => {
+        const osc = audioCtx!.createOscillator();
+        const gain = audioCtx!.createGain();
+        osc.type = "square";
+        osc.frequency.setValueAtTime(freq, now + i * 0.06);
+        gain.gain.setValueAtTime(0.05, now + i * 0.06);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.06 + 0.18);
+        osc.connect(gain).connect(audioCtx!.destination);
+        osc.start(now + i * 0.06);
+        osc.stop(now + i * 0.06 + 0.2);
+      });
+    } catch {
+      /* Web Audio unavailable — silently skip, sound is a nice-to-have */
+    }
+  }
+
+  soundToggle.addEventListener("click", () => {
+    soundOn = !soundOn;
+    soundToggle.textContent = soundOn ? "🔊" : "🔇";
+  });
+
+  // --- Secret "Your Mama" easter egg: tap the receipt title 5x quickly ---
+  let tapCount = 0;
+  let tapTimer: number | null = null;
+  receiptTitleTap.addEventListener("click", () => {
+    tapCount += 1;
+    if (tapTimer) clearTimeout(tapTimer);
+    tapTimer = window.setTimeout(() => (tapCount = 0), 1200);
+    if (tapCount >= 5) {
+      tapCount = 0;
+      secretCard.classList.remove("hidden");
+      secretCard.classList.add("flex");
+      secretCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      showToast("👀 You found a secret option.");
+    }
+  });
+
+  function showToast(message: string) {
+    toast.textContent = message;
+    toast.classList.remove("show");
+    void toast.offsetWidth;
+    toast.classList.add("show");
+    window.clearTimeout((showToast as any)._t);
+    (showToast as any)._t = window.setTimeout(() => toast.classList.remove("show"), 1800);
+  }
+
+  function shakeScreen() {
+    gameRoot.classList.remove("animate-shake");
+    void gameRoot.offsetWidth;
+    gameRoot.classList.add("animate-shake");
+  }
+
+  function animateBalance(to: number) {
+    if (animFrame) cancelAnimationFrame(animFrame);
+    const from = displayedBalance;
+    const start = performance.now();
+    const duration = 350;
+    function tick(now: number) {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      displayedBalance = from + (to - from) * eased;
+      renderBalance(displayedBalance);
+      if (t < 1) {
+        animFrame = requestAnimationFrame(tick);
+      } else {
+        displayedBalance = to;
+      }
+    }
+    animFrame = requestAnimationFrame(tick);
+  }
+
+  function renderBalance(amount: number) {
+    balanceEl.textContent = formatFullUSD(amount);
+    balanceEl.classList.toggle("text-debit", amount < 0);
+    balanceEl.classList.toggle("text-credit", amount >= 0);
+  }
+
+  function bumpBalance() {
+    balanceEl.classList.remove("animate-bump");
+    void balanceEl.offsetWidth;
+    balanceEl.classList.add("animate-bump");
+  }
+
+  function renderSpendTier() {
+    const total = getTotalSpent(state);
+    spendTierEl.textContent = total > 0 ? `Status: ${getSpendTier(total, state.startingBalance)}` : "";
+  }
+
+  function renderReceipt() {
+    receiptList.querySelectorAll("[data-line]").forEach((el) => el.remove());
+    if (state.purchases.length === 0) {
+      receiptEmpty.classList.remove("hidden");
+    } else {
+      receiptEmpty.classList.add("hidden");
+      for (const p of state.purchases) {
+        const li = document.createElement("li");
+        li.dataset.line = p.id;
+        li.className = "receipt-line flex justify-between gap-3 py-1";
+        const label = document.createElement("span");
+        label.textContent = p.qty > 1 ? `${p.qty}x ${p.name}` : p.name;
+        const value = document.createElement("span");
+        value.className = "shrink-0";
+        value.textContent = `-${formatShortUSD(p.price * p.qty)}`;
+        li.append(label, value);
+        receiptList.appendChild(li);
+      }
+      receiptList.scrollTop = receiptList.scrollHeight;
+    }
+  }
+
+  function persistBestScore() {
+    const count = getItemCount(state);
+    if (count === 0) return;
+    try {
+      const prev = Number(localStorage.getItem(bestKey));
+      if (!prev || count < prev) localStorage.setItem(bestKey, String(count));
+      renderBestScore();
+    } catch {
+      /* localStorage unavailable (e.g. privacy mode) — skip silently, not critical to gameplay */
+    }
+  }
+
+  function fireConfetti() {
+    const ctx = confettiCanvas.getContext("2d");
+    if (!ctx) return;
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+    const colors = ["#FFC630", "#16A34A", "#E0328B", "#3FA9F5", "#B388FF"];
+    const pieces = Array.from({ length: 90 }, () => ({
+      x: Math.random() * confettiCanvas.width,
+      y: -20 - Math.random() * confettiCanvas.height * 0.3,
+      w: 6 + Math.random() * 6,
+      h: 8 + Math.random() * 8,
+      vy: 2 + Math.random() * 3,
+      vx: -1.5 + Math.random() * 3,
+      rot: Math.random() * Math.PI,
+      vr: -0.2 + Math.random() * 0.4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+    }));
+    const start = performance.now();
+    function frame(now: number) {
+      const elapsed = now - start;
+      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      for (const p of pieces) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vr;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      }
+      if (elapsed < 2200) {
+        requestAnimationFrame(frame);
+      } else {
+        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function openCheckout() {
+    const total = getTotalSpent(state);
+    const top = getTopPurchase(state);
+    const boughtMama = state.purchases.some((p) => p.id === "your-mama");
+    const seconds = getElapsedSeconds(state);
+    const tier = getSpendTier(total, state.startingBalance);
+
+    if (total <= 0) {
+      checkoutKicker.textContent = "Checkout";
+      checkoutHeading.textContent = "You haven't bought anything yet.";
+      checkoutSummary.textContent = "Go pick something ridiculous, then come back.";
+      checkoutComparisons.innerHTML = "";
+    } else if (boughtMama) {
+      checkoutKicker.textContent = "Achievement unlocked 💀";
+      checkoutHeading.textContent = "You bought Your Mama.";
+      checkoutSummary.textContent = "There is nothing left to say. Legendary run.";
+    } else {
+      checkoutKicker.textContent = state.balance < 0 ? "Over budget 🚨" : "Checkout";
+      checkoutHeading.textContent = state.balance < 0 ? "You spent it all — and then some." : "Here's the damage.";
+      checkoutSummary.textContent = `You spent ${formatShortUSD(total)} across ${getItemCount(state)} purchases` +
+        (seconds !== null ? ` in ${seconds}s` : "") +
+        (top ? `, mostly on ${top.name}. Status: ${tier}.` : `. Status: ${tier}.`);
+    }
+
+    checkoutComparisons.innerHTML = "";
+    for (const c of getComparisons(total).slice(0, 3)) {
+      const li = document.createElement("li");
+      li.textContent = `= ${c.count} ${c.label}`;
+      checkoutComparisons.appendChild(li);
+    }
+    if (total > 0) persistBestScore();
+    checkoutOverlay.classList.remove("hidden");
+    checkoutOverlay.classList.add("flex");
+    if (total > 0) fireConfetti();
+  }
+
+  function closeCheckout() {
+    checkoutOverlay.classList.add("hidden");
+    checkoutOverlay.classList.remove("flex");
+  }
+
+  function handlePurchase(item: ShopItem, qty: number) {
+    const priceTotal = item.price * qty;
+    state = purchaseItem(state, item, qty);
+    animateBalance(state.balance);
+    bumpBalance();
+    renderReceipt();
+    renderSpendTier();
+    playCoinSound();
+    showToast(item.blurb);
+    if (priceTotal >= state.startingBalance * 0.05) shakeScreen();
+  }
+
+  function wireCard(card: HTMLElement) {
+    const id = card.dataset.id!;
+    const item = shopItems.find((i) => i.id === id);
+    if (!item) return;
+    const qtyInput = card.querySelector<HTMLInputElement>(".qty-input");
+    const maxBtn = card.querySelector<HTMLButtonElement>(".max-btn");
+    const buyBtn = card.querySelector<HTMLButtonElement>(".buy-btn");
+
+    maxBtn?.addEventListener("click", () => {
+      if (qtyInput) qtyInput.value = String(getMaxAffordableQty(state, item));
+    });
+    buyBtn?.addEventListener("click", () => {
+      const qty = Math.max(1, Math.floor(Number(qtyInput?.value) || 1));
+      handlePurchase(item, qty);
+    });
+  }
+  shopGrid.querySelectorAll<HTMLElement>(".shop-card").forEach(wireCard);
+
+  secretPriceEl.textContent = "everything";
+  secretBuyBtn.addEventListener("click", () => {
+    const mama: ShopItem = {
+      id: "your-mama",
+      name: "Your Mama",
+      emoji: "💀",
+      price: Math.max(state.balance, 1),
+      category: "secret",
+      blurb: "Priceless. Literally.",
+    };
+    handlePurchase(mama, 1);
+  });
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((t) => {
+        t.classList.remove("bg-amber", "text-ink");
+        t.classList.add("bg-void-raised", "text-ink/70");
+      });
+      tab.classList.add("bg-amber", "text-ink");
+      tab.classList.remove("bg-void-raised", "text-ink/70");
+      const cat = tab.dataset.category;
+      shopGrid.querySelectorAll<HTMLElement>(".shop-card").forEach((card) => {
+        if (card.id === "secret-card") return; // secret stays wherever its unlock state left it
+        const show = cat === "all" || card.dataset.category === cat;
+        card.classList.toggle("hidden", !show);
+      });
+    });
+  });
+
+  function doReset() {
+    state = resetGame(state);
+    animateBalance(state.balance);
+    renderReceipt();
+    renderSpendTier();
+    closeCheckout();
+  }
+
+  resetBtn.addEventListener("click", doReset);
+  checkoutBtn.addEventListener("click", openCheckout);
+  checkoutKeepShopping.addEventListener("click", closeCheckout);
+  checkoutStartOver.addEventListener("click", doReset);
+
+  checkoutShare.addEventListener("click", () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 600;
+    canvas.height = 750;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    ctx.fillStyle = "#fff4de";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#1a1508";
+    ctx.textAlign = "center";
+    ctx.font = "bold 22px sans-serif";
+    ctx.fillText("SPENDING RECEIPT", canvas.width / 2, 60);
+    ctx.font = "12px monospace";
+    ctx.fillText(`${displayName.toUpperCase()} FUNDS CO.`, canvas.width / 2, 82);
+
+    ctx.strokeStyle = "#e3b95c";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(40, 105);
+    ctx.lineTo(canvas.width - 40, 105);
+    ctx.stroke();
+
+    ctx.textAlign = "left";
+    ctx.font = "13px monospace";
+    let y = 135;
+    const sorted = [...state.purchases].sort((a, b) => b.price * b.qty - a.price * a.qty).slice(0, 10);
+    for (const p of sorted) {
+      const label = p.qty > 1 ? `${p.qty}x ${p.name}` : p.name;
+      ctx.fillText(label.slice(0, 38), 40, y);
+      ctx.textAlign = "right";
+      ctx.fillText(`-${formatShortUSD(p.price * p.qty)}`, canvas.width - 40, y);
+      ctx.textAlign = "left";
+      y += 24;
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(40, y + 10);
+    ctx.lineTo(canvas.width - 40, y + 10);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.font = "bold 18px sans-serif";
+    ctx.fillStyle = "#1a1508";
+    ctx.fillText("TOTAL SPENT", 40, y + 45);
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#e11d3c";
+    ctx.fillText(formatShortUSD(getTotalSpent(state)), canvas.width - 40, y + 45);
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#1a1508";
+    ctx.font = "12px monospace";
+    ctx.fillText("Played at How Rich Is Too Rich", canvas.width / 2, canvas.height - 30);
+
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${slug}-spending-receipt.png`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  });
+
+  renderBalance(state.balance);
+  renderReceipt();
+  renderSpendTier();
+</script>
