@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { ITEMS, CATEGORY_ORDER } from '../data/items';
-import { STARTING_NET_WORTH, ACHIEVEMENTS, formatUsd } from '../lib/gameEngine';
+import { STARTING_NET_WORTH, formatUsd } from '../lib/gameEngine';
 
 const faqItems = [
   {
@@ -25,20 +25,20 @@ const faqItems = [
       'Doge Mode is a playful display toggle that converts every price and the running balance into a fictional Dogecoin-style unit at a fixed illustrative rate, purely for fun.',
   },
   {
-    question: 'How do the Buy/Sell multipliers work?',
+    question: 'Are there any secrets in this game?',
     answer:
-      'Switch the quantity toggle between x1, x10, x100, or MAX before hitting Buy or Sell, and every click applies that quantity — MAX buys as many as your balance allows, or sells everything you currently own.',
+      "Yes. There are hidden bonus mini-games and at least one secret item tucked into the interface — try clicking around, and see if a certain word unlocks something extra.",
   },
   {
-    question: "What happens when the balance hits zero?",
+    question: "What happens when I run out of money?",
     answer:
-      "You've hit the Zero Balance Achievement — the run is complete. Open the Mission Receipt to see a full breakdown of everything purchased, then reset to fly again.",
+      "Nothing forces you to stop — your balance can go negative. Whenever you're done, hit Checkout to see your full spending breakdown, your spend-tier title, and a downloadable receipt.",
   },
 ];
 
 const title = "Spend Elon Musk's Money — Billionaire Spending Simulator Game";
 const description =
-  "Spend a satirical $1 trillion mission budget on rockets, mansions, and absurd purchases in this free, 100% client-side billionaire spending simulator. No sign-up, no data collection.";
+  "Spend a satirical $1 trillion fortune on rockets, mansions, and absurd purchases, spin the Lucky Wheel, and hunt for secrets — a free, 100% client-side billionaire spending game.";
 ---
 
 <Layout
@@ -47,216 +47,207 @@ const description =
   canonicalUrl="https://example.com/"
   faqItems={faqItems}
 >
-  <!-- ============ STICKY MISSION TELEMETRY HUD ============ -->
-  <header
-    id="hud"
-    class="sticky top-0 z-40 border-b border-cyan-500/30 bg-[#030712]/95 backdrop-blur supports-[backdrop-filter]:bg-[#030712]/80"
-  >
-    <div class="mx-auto max-w-6xl px-4 py-3">
+  <!-- ============ HEADER ============ -->
+  <header class="sticky top-0 z-40 border-b-2 border-line bg-void/95 backdrop-blur">
+    <div class="mx-auto max-w-6xl px-4 py-3 sm:px-6">
       <div class="flex flex-wrap items-center justify-between gap-3">
-        <button
-          id="mission-title"
-          type="button"
-          class="select-none text-left text-sm font-mono-hud uppercase tracking-widest text-cyan-400/80 hover:text-cyan-300"
-          aria-label="Mission title"
-        >
-          ▲ Mission Control <span class="text-slate-500">/ Spend The Fortune</span>
-        </button>
+        <div class="flex items-center gap-2.5">
+          <button
+            id="logo-tap"
+            type="button"
+            aria-label="How Rich Is Too Rich"
+            class="ticket-stub flex h-9 w-9 items-center justify-center rounded font-display text-base font-black"
+          >
+            $
+          </button>
+          <button
+            id="title-tap"
+            type="button"
+            class="select-none font-display text-base font-bold text-ink sm:text-lg"
+          >
+            How Rich Is Too Rich
+          </button>
+        </div>
 
-        <div class="flex items-center gap-3">
-          <label class="flex items-center gap-2 text-xs font-mono-hud text-slate-400">
+        <div class="flex flex-wrap items-center gap-2">
+          <button
+            id="spin-open"
+            type="button"
+            class="brutal rounded-md border-2 border-line bg-cat-companies px-3 py-1.5 font-display text-xs font-bold text-ink"
+            style="--accent:#1a1508"
+          >
+            🎰 Lucky Spin
+          </button>
+          <label class="flex items-center gap-1.5 rounded-md border-2 border-line bg-void-raised px-2 py-1.5 text-xs font-mono-hud">
             <span>$</span>
             <button
               id="doge-toggle"
               type="button"
               role="switch"
               aria-checked="false"
-              class="relative h-6 w-11 rounded-full border border-cyan-500/40 bg-slate-900 transition-colors"
+              class="relative h-5 w-9 rounded-full border-2 border-line bg-void"
             >
-              <span
-                id="doge-toggle-knob"
-                class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-cyan-400 transition-transform"
-              ></span>
+              <span id="doge-toggle-knob" class="absolute left-0.5 top-0.5 h-3 w-3 rounded-full bg-pop-pink transition-transform"></span>
             </button>
             <span>Ð</span>
           </label>
-
           <button
             id="sound-toggle"
             type="button"
             aria-pressed="true"
-            class="rounded border border-cyan-500/40 px-2 py-1 text-xs font-mono-hud text-cyan-300 hover:bg-cyan-500/10"
+            class="rounded-md border-2 border-line bg-void-raised px-2 py-1.5 text-xs font-mono-hud"
           >
-            🔊 SFX ON
+            🔊
           </button>
-
           <button
-            id="open-receipt"
+            id="checkout-open"
             type="button"
-            class="rounded border border-emerald-500/50 px-3 py-1 text-xs font-mono-hud uppercase text-emerald-300 hover:bg-emerald-500/10"
+            class="brutal rounded-md border-2 border-line bg-amber px-4 py-1.5 font-display text-xs font-bold text-ink"
           >
-            View Mission Receipt
+            🧾 Checkout
           </button>
         </div>
       </div>
 
-      <div class="mt-3 grid gap-3 sm:grid-cols-[1fr_auto]">
+      <div class="mt-3 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <div class="flex items-baseline justify-between text-xs font-mono-hud text-slate-400">
-            <span>BALANCE</span>
-            <span id="balance-percent">100.0000%</span>
-          </div>
-          <div id="balance" class="font-mono-hud text-3xl font-bold text-emerald-400 sm:text-4xl">
+          <p class="font-mono-hud text-[10px] uppercase tracking-widest text-ink/50">Remaining Fortune</p>
+          <div id="balance" class="font-display text-3xl font-black leading-none text-ink sm:text-4xl">
             {formatUsd(STARTING_NET_WORTH)}
           </div>
-          <div class="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-900 hud-corners">
-            <div
-              id="fuel-gauge"
-              class="h-full w-full bg-gradient-to-r from-cyan-500 to-emerald-500 transition-[width,background-color] duration-500"
-            ></div>
-          </div>
-          <div class="mt-1 text-[10px] font-mono-hud uppercase tracking-wide text-slate-500">
-            Fuel / Funds Remaining
-          </div>
+          <p id="spend-tier" class="mt-1 font-mono-hud text-[11px] font-bold uppercase tracking-wide text-pop-pink"></p>
         </div>
-
-        <div class="flex items-end gap-1" role="group" aria-label="Quantity multiplier">
-          {['x1', 'x10', 'x100', 'MAX'].map((label, i) => (
-            <button
-              type="button"
-              class="multiplier-btn rounded border border-cyan-500/40 px-3 py-1.5 text-xs font-mono-hud text-slate-300 hover:bg-cyan-500/10 aria-pressed:bg-cyan-500/20 aria-pressed:text-cyan-300 aria-pressed:border-cyan-400"
-              data-multiplier={label}
-              aria-pressed={i === 0 ? 'true' : 'false'}
-            >
-              {label}
-            </button>
-          ))}
+        <div class="w-full max-w-xs sm:w-56">
+          <div class="h-4 w-full overflow-hidden rounded-full border-2 border-line bg-void-raised">
+            <div id="fortune-meter" class="h-full w-full bg-credit transition-[width,background-color] duration-500"></div>
+          </div>
+          <p id="balance-percent" class="mt-1 text-right font-mono-hud text-[10px] text-ink/50">100.0000% left</p>
         </div>
       </div>
     </div>
   </header>
 
-  <main class="mx-auto max-w-6xl px-4 pb-24 pt-8">
-    <p class="mb-8 max-w-2xl text-sm text-slate-400">
-      Starting mission budget: a flat <strong class="text-slate-200">$1 trillion</strong>,
-      an illustrative round-number estimate for entertainment purposes only — not real-time
-      financial data, and not linked to any real person's actual net worth.
+  <!-- ============ CATEGORY TABS ============ -->
+  <div class="mx-auto max-w-6xl px-4 pt-6 sm:px-6">
+    <div class="flex flex-wrap gap-2" id="category-tabs">
+      <button type="button" data-category="all" class="tab-btn brutal rounded-full border-2 border-line bg-amber px-4 py-1.5 font-display text-xs font-bold uppercase text-ink" aria-pressed="true">
+        All
+      </button>
+      {CATEGORY_ORDER.map((c) => (
+        <button type="button" data-category={c} class="tab-btn brutal rounded-full border-2 border-line bg-void-raised px-4 py-1.5 font-display text-xs font-bold uppercase text-ink/70" aria-pressed="false">
+          {c}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <main class="mx-auto max-w-6xl px-4 pb-24 pt-6 sm:px-6">
+    <p class="mb-6 max-w-2xl text-sm text-ink/60">
+      Starting fortune: a flat <strong class="text-ink">$1 trillion</strong> — an illustrative
+      round-number estimate for entertainment purposes only, not real-time financial data and
+      not linked to any real person's actual net worth.
     </p>
 
-    <!-- ============ ITEM GRID ============ -->
-    {CATEGORY_ORDER.map((category) => (
-      <section class="mb-10" aria-labelledby={`cat-${category}`}>
-        <h2
-          id={`cat-${category}`}
-          class="mb-3 font-mono-hud text-sm uppercase tracking-widest text-cyan-400/80"
+    <!-- ============ SHOP GRID ============ -->
+    <div id="shop-grid" class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {ITEMS.map((item) => (
+        <article
+          class="shop-card brutal flex min-h-[240px] flex-col gap-2 rounded-xl border-2 border-line bg-void-raised p-5"
+          style={`--accent:var(--color-cat-${item.category.toLowerCase().replace(' ', '-')})`}
+          data-item-id={item.id}
+          data-category={item.category}
         >
-          {category}
-        </h2>
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {ITEMS.filter((item) => item.category === category).map((item) => (
-            <article
-              class="hud-corners rounded-lg border border-slate-800 bg-slate-950/60 p-4"
-              data-item-id={item.id}
-              data-item-price={item.price}
+          <div class="flex items-start justify-between gap-2">
+            <span
+              class="flex h-14 w-14 items-center justify-center rounded-lg text-3xl"
+              style={`background:color-mix(in srgb, var(--color-cat-${item.category.toLowerCase().replace(' ', '-')}) 18%, transparent)`}
+              aria-hidden="true"
             >
-              <div class="flex items-start justify-between">
-                <span class="text-3xl" aria-hidden="true">{item.emoji}</span>
-                <span
-                  id={`count-${item.id}`}
-                  class="rounded-full border border-slate-700 px-2 py-0.5 text-[10px] font-mono-hud text-slate-400"
-                >
-                  x0
-                </span>
-              </div>
-              <h3 class="mt-2 text-sm font-semibold text-slate-100">{item.name}</h3>
-              <p class="mt-1 text-xs text-slate-500">{item.flavor}</p>
-              <div id={`price-${item.id}`} class="mt-3 font-mono-hud text-base text-emerald-400">
-                {formatUsd(item.price)}
-              </div>
-              <div class="mt-3 flex gap-2">
-                <button
-                  type="button"
-                  class="buy-btn flex-1 rounded border border-emerald-500/50 py-1.5 text-xs font-mono-hud uppercase text-emerald-300 hover:bg-emerald-500/10 disabled:cursor-not-allowed disabled:opacity-30"
-                  data-item-id={item.id}
-                >
-                  Buy
-                </button>
-                <button
-                  type="button"
-                  class="sell-btn flex-1 rounded border border-rose-500/40 py-1.5 text-xs font-mono-hud uppercase text-rose-300 hover:bg-rose-500/10 disabled:cursor-not-allowed disabled:opacity-30"
-                  data-item-id={item.id}
-                  disabled
-                >
-                  Sell
-                </button>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-    ))}
+              {item.emoji}
+            </span>
+            <span id={`count-${item.id}`} class="ticket-stub inline-block shrink-0 rounded px-2 py-1 font-mono-hud text-[10px] font-bold">
+              x0
+            </span>
+          </div>
+          <h3 class="font-display text-sm font-bold leading-snug text-ink">{item.name}</h3>
+          <p class="text-xs text-ink/50">{item.flavor}</p>
+          <div id={`price-${item.id}`} class="mt-1 font-mono-hud text-base font-bold text-ink">
+            {formatUsd(item.price)}
+          </div>
+          <div class="mt-auto flex items-center gap-2 pt-2">
+            <input
+              type="number"
+              min="1"
+              value="1"
+              inputmode="numeric"
+              class="qty-input w-16 rounded-md border-2 border-line bg-void px-2 py-1.5 text-center font-mono-hud text-sm font-bold text-ink"
+              aria-label={`Quantity of ${item.name}`}
+            />
+            <button type="button" class="max-btn rounded-md border-2 border-line bg-void px-2 py-1.5 font-mono-hud text-[10px] font-bold text-ink">
+              MAX
+            </button>
+            <button type="button" class="buy-btn brutal ml-auto rounded-md border-2 border-line bg-amber px-3.5 py-1.5 font-display text-xs font-bold text-ink disabled:cursor-not-allowed disabled:opacity-30">
+              Buy
+            </button>
+          </div>
+        </article>
+      ))}
+    </div>
 
-    <!-- Secret easter-egg slot, populated only after the title is tapped 5x -->
-    <section id="secret-slot" class="mb-10 hidden" aria-live="polite"></section>
+    <!-- Secret slot — hidden until the title is tapped 5x quickly -->
+    <section id="secret-slot" class="mt-8 hidden" aria-live="polite"></section>
 
-    <div class="flex justify-center">
-      <button
-        id="reset-btn"
-        type="button"
-        class="rounded border border-slate-700 px-6 py-2 text-xs font-mono-hud uppercase tracking-widest text-slate-400 hover:border-rose-500/50 hover:text-rose-300"
-      >
+    <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+      <button id="reset-btn" type="button" class="font-mono-hud text-xs text-ink/50 underline hover:text-pop-pink">
         Reset Mission
       </button>
+      <p id="best-score" class="font-mono-hud text-xs text-ink/40"></p>
     </div>
 
     <!-- ============ SEO CONTENT BLOCK ============ -->
-    <article class="prose prose-invert mt-24 max-w-none border-t border-slate-800 pt-12 text-slate-300">
-      <h2 class="font-mono-hud text-xl text-slate-100">What Is the Spend Elon Musk's Money Simulator?</h2>
+    <article class="prose mt-20 max-w-none border-t-2 border-dashed border-line-paper pt-12 text-ink/70">
+      <h2 class="font-display text-xl font-bold text-ink">What Is the Spend Elon Musk's Money Simulator?</h2>
       <p>
-        This free browser game hands you a satirical mission budget — a flat, illustrative $1
-        trillion — and lets you spend it on everything from a value meal to a national highway
-        overhaul until the counter hits zero. It's built as a lighthearted commentary on the
-        scale of extreme wealth, not a financial tool or a real-time tracker. Every price, every
-        item, and every category is fixed and hand-curated, and nothing here represents any real
+        This free browser game hands you a satirical fortune — a flat, illustrative $1 trillion
+        — and lets you spend it on everything from a value meal to a national highway overhaul
+        until it's gone. It's a lighthearted toy, not a financial tool or a real-time tracker.
+        Every price and item is fixed and hand-curated, and nothing here represents any real
         company, product, or individual's actual holdings.
       </p>
 
-      <h2 class="font-mono-hud text-xl text-slate-100">Visualizing $1 Trillion: How Big Is That, Really?</h2>
+      <h2 class="font-display text-xl font-bold text-ink">Visualizing $1 Trillion: How Big Is That, Really?</h2>
       <p>
         A trillion dollars is a number most people can say but few can picture. If you spent a
         dollar every second, it would take over 31,000 years to burn through a trillion. This
-        game turns that abstraction into something tactile: watch a mission budget drain in real
-        time as you buy rockets, mansions, sports franchises, and increasingly absurd purchases,
-        and see exactly how far that kind of money actually stretches — and how quickly even a
-        trillion dollars can disappear once the big-ticket items start stacking up.
+        game turns that abstraction into something tactile: watch a fortune drain in real time
+        as you buy rockets, mansions, sports franchises, and increasingly absurd purchases, and
+        see exactly how far that kind of money actually stretches.
       </p>
 
-      <h2 class="font-mono-hud text-xl text-slate-100">How to Play &amp; Strategy Guide</h2>
+      <h2 class="font-display text-xl font-bold text-ink">How to Play</h2>
       <p>
-        Pick a quantity multiplier — x1, x10, x100, or MAX — then hit Buy on any item in the
-        shop grid. Your balance and the Fuel Gauge update instantly, and an achievement toast
-        fires the first time you cross a major spending milestone. Sell an item back at any point
-        if you change your mind. Toggle Doge Mode to see every price converted into a playful
-        fictional currency, and switch on the sound effects for a synthesized click-and-launch
-        feedback loop. When you're done, open the Mission Receipt to get a shareable, terminal-
-        style summary of your entire run.
+        Set a quantity, hit MAX to auto-fill the most you can afford, then Buy. Filter the shop
+        by category using the tabs up top. Spin the Lucky Wheel for a quick gamble with your
+        fortune, toggle Doge Mode for a silly currency switch, and keep an eye out for hidden
+        extras — this game has more than one secret. When you're done, hit Checkout for a full
+        breakdown and a downloadable receipt worth sharing.
       </p>
 
-      <h2 class="font-mono-hud text-xl text-slate-100">Frequently Asked Questions</h2>
-      <div class="not-prose divide-y divide-slate-800 rounded-lg border border-slate-800">
+      <h2 class="font-display text-xl font-bold text-ink">Frequently Asked Questions</h2>
+      <div class="not-prose divide-y-2 divide-line-paper rounded-lg border-2 border-line bg-void-raised">
         {faqItems.map((faq) => (
           <details class="group p-4">
-            <summary class="cursor-pointer list-none font-mono-hud text-sm text-slate-100 marker:content-none">
-              <span class="mr-2 text-cyan-400 group-open:hidden">+</span>
-              <span class="mr-2 hidden text-cyan-400 group-open:inline">−</span>
+            <summary class="cursor-pointer list-none font-display text-sm font-bold text-ink marker:content-none">
+              <span class="mr-2 text-pop-pink group-open:hidden">+</span>
+              <span class="mr-2 hidden text-pop-pink group-open:inline">−</span>
               {faq.question}
             </summary>
-            <p class="mt-2 pl-5 text-sm text-slate-400">{faq.answer}</p>
+            <p class="mt-2 pl-5 text-sm text-ink/60">{faq.answer}</p>
           </details>
         ))}
       </div>
 
-      <p class="mt-8 text-xs text-slate-600">
+      <p class="mt-8 text-xs text-ink/40">
         Not affiliated with, endorsed by, or sponsored by any real individual or company. Net
         worth figures are illustrative, publicly-sourced estimates used for entertainment
         purposes only. See the <a href="/disclaimer" class="underline">disclaimer</a> for full details.
@@ -264,62 +255,104 @@ const description =
     </article>
   </main>
 
-  <!-- ============ ACHIEVEMENT TOAST CONTAINER ============ -->
-  <div
-    id="toast-container"
-    class="pointer-events-none fixed bottom-4 left-1/2 z-50 flex w-full max-w-sm -translate-x-1/2 flex-col gap-2 px-4"
-    aria-live="polite"
-  ></div>
+  <!-- ============ TOASTS ============ -->
+  <div id="toast-container" class="pointer-events-none fixed bottom-4 left-1/2 z-50 flex w-full max-w-sm -translate-x-1/2 flex-col items-center gap-2 px-4" aria-live="polite"></div>
 
-  <!-- ============ MISSION RECEIPT MODAL ============ -->
-  <dialog
-    id="receipt-modal"
-    class="w-full max-w-md rounded-lg border border-cyan-500/30 bg-slate-950 p-0 text-slate-100 backdrop:bg-black/70"
-  >
-    <div class="hud-corners p-5">
-      <div class="flex items-center justify-between">
-        <h2 class="font-mono-hud text-sm uppercase tracking-widest text-cyan-400">Mission Receipt</h2>
-        <button id="close-receipt" type="button" class="text-slate-500 hover:text-slate-200" aria-label="Close">✕</button>
-      </div>
-      <pre id="receipt-text" class="mt-4 max-h-80 overflow-y-auto whitespace-pre-wrap font-mono-hud text-xs text-slate-300"></pre>
-      <div class="mt-4 flex gap-2">
-        <button
-          id="copy-receipt"
-          type="button"
-          class="flex-1 rounded border border-emerald-500/50 py-2 text-xs font-mono-hud uppercase text-emerald-300 hover:bg-emerald-500/10"
-        >
-          Copy Receipt to Clipboard
+  <!-- ============ CONFETTI ============ -->
+  <canvas id="confetti-canvas" class="pointer-events-none fixed inset-0 z-[60]"></canvas>
+
+  <!-- ============ CHECKOUT MODAL ============ -->
+  <div id="checkout-overlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/60 p-4 backdrop-blur-sm">
+    <div class="brutal animate-wobble-in relative w-full max-w-sm bg-paper p-6 text-ink" style="--accent:#1a1508">
+      <p class="font-mono-hud text-xs font-bold uppercase tracking-widest text-debit" id="checkout-kicker">Checkout</p>
+      <h2 class="mt-1 font-display text-2xl font-bold" id="checkout-heading">Here's the damage.</h2>
+      <p class="mt-3 text-sm" id="checkout-summary"></p>
+      <ul class="mt-3 space-y-1 font-mono-hud text-xs text-ink/70" id="checkout-comparisons"></ul>
+      <div class="mt-6 grid grid-cols-2 gap-2">
+        <button id="checkout-keep-shopping" type="button" class="brutal rounded-md border-2 border-line bg-void-raised px-4 py-2 font-display text-xs font-bold text-ink">
+          Keep shopping
+        </button>
+        <button id="checkout-start-over" type="button" class="brutal rounded-md border-2 border-line bg-void-raised px-4 py-2 font-display text-xs font-bold text-ink">
+          Start over
+        </button>
+        <button id="checkout-download" type="button" class="brutal col-span-2 rounded-md border-2 border-line bg-amber px-4 py-2 font-display text-sm font-bold text-ink">
+          📥 Download receipt
         </button>
       </div>
     </div>
-  </dialog>
+  </div>
+
+  <!-- ============ LUCKY SPIN MINI-GAME ============ -->
+  <div id="spin-overlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/60 p-4 backdrop-blur-sm">
+    <div class="brutal animate-wobble-in relative w-full max-w-sm bg-void-raised p-6 text-ink" style="--accent:#1a1508">
+      <div class="flex items-center justify-between">
+        <h2 class="font-display text-xl font-bold">🎰 Lucky Spin</h2>
+        <button id="spin-close" type="button" class="text-ink/50 hover:text-pop-pink" aria-label="Close">✕</button>
+      </div>
+      <p class="mt-1 text-xs text-ink/60">Entry fee: <span id="spin-cost-label" class="font-mono-hud font-bold"></span>. Win up to 10x.</p>
+
+      <div class="relative mt-4 h-14 overflow-hidden rounded-md border-2 border-line bg-void">
+        <div id="spin-reel" class="absolute left-0 top-0 w-full"></div>
+        <div class="pointer-events-none absolute inset-x-0 top-1/2 h-14 -translate-y-1/2 border-y-2 border-dashed border-pop-pink"></div>
+      </div>
+
+      <p id="spin-result" class="mt-3 min-h-[1.5rem] text-center font-display text-sm font-bold"></p>
+
+      <button id="spin-btn" type="button" class="brutal mt-4 w-full rounded-md border-2 border-line bg-amber px-4 py-2 font-display text-sm font-bold text-ink disabled:cursor-not-allowed disabled:opacity-40">
+        Spin
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ MONEY RAIN MINI-GAME (secret — 3x tap the $ logo) ============ -->
+  <div id="rain-overlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/60 p-4 backdrop-blur-sm">
+    <div class="brutal animate-wobble-in relative w-full max-w-sm bg-void-raised p-5 text-ink" style="--accent:#1a1508">
+      <div class="flex items-center justify-between">
+        <h2 class="font-display text-lg font-bold">💰 Money Rain</h2>
+        <button id="rain-close" type="button" class="text-ink/50 hover:text-pop-pink" aria-label="Close">✕</button>
+      </div>
+      <div class="mt-1 flex items-center justify-between font-mono-hud text-xs">
+        <span>Time: <span id="rain-timer">8</span>s</span>
+        <span>Bonus: <span id="rain-score">$0</span></span>
+      </div>
+      <div id="rain-field" class="relative mt-3 h-96 w-full overflow-hidden rounded-md border-2 border-line bg-void"></div>
+      <button id="rain-start" type="button" class="brutal mt-4 w-full rounded-md border-2 border-line bg-amber px-4 py-2 font-display text-sm font-bold text-ink">
+        Start catching!
+      </button>
+    </div>
+  </div>
 
   <script>
-    import { ITEMS } from '../data/items';
+    import { ITEMS, CATEGORY_ORDER } from '../data/items';
     import {
       createInitialState,
       purchase,
-      sell,
+      applyDelta,
       reset as resetState,
       percentSpent,
       percentRemaining,
       canAfford,
+      getMaxAffordableQty,
       checkNewAchievements,
       withUnlockedAchievements,
       buildSecretItem,
       formatUsd,
       formatDoge,
       amountSpent,
+      getSpendTier,
+      getElapsedSeconds,
+      getItemCount,
       type GameState,
       type ShopItem,
     } from '../lib/gameEngine';
 
     const itemsById = new Map<string, ShopItem>(ITEMS.map((i) => [i.id, i]));
     let state: GameState = createInitialState();
-    let multiplier: number | 'MAX' = 1;
     let dogeMode = false;
     let soundOn = true;
+    let activeCategory = 'all';
     let titleTapTimes: number[] = [];
+    let logoTapTimes: number[] = [];
 
     // ---------- Web Audio (synthesized, no external files) ----------
     let audioCtx: AudioContext | null = null;
@@ -333,7 +366,6 @@ const description =
       if (audioCtx.state === 'suspended') audioCtx.resume();
       return audioCtx;
     }
-
     function tone(freq: number, duration: number, type: OscillatorType = 'sine', gainPeak = 0.15) {
       const ctx = getAudioCtx();
       if (!ctx) return;
@@ -348,57 +380,122 @@ const description =
       osc.start();
       osc.stop(ctx.currentTime + duration);
     }
-
-    function playClick() {
-      tone(880, 0.08, 'square', 0.08);
-    }
-    function playCoinChime() {
+    function playClick() { tone(880, 0.08, 'square', 0.08); }
+    function playCoin() {
       tone(1200, 0.12, 'triangle', 0.12);
       setTimeout(() => tone(1600, 0.15, 'triangle', 0.1), 60);
     }
-    function playLaunchRumble() {
+    function playRumble() {
       const ctx = getAudioCtx();
       if (!ctx) return;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(60, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 1.2);
+      osc.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 1);
       gain.gain.setValueAtTime(0.2, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.2);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1);
       osc.connect(gain).connect(ctx.destination);
       osc.start();
-      osc.stop(ctx.currentTime + 1.2);
+      osc.stop(ctx.currentTime + 1);
+    }
+    function playJingle() {
+      [660, 880, 1100, 1320].forEach((f, i) => setTimeout(() => tone(f, 0.18, 'triangle', 0.1), i * 90));
+    }
+    function playSad() {
+      tone(220, 0.3, 'sawtooth', 0.08);
+    }
+
+    document.getElementById('sound-toggle')?.addEventListener('click', () => {
+      soundOn = !soundOn;
+      const btn = document.getElementById('sound-toggle') as HTMLButtonElement;
+      btn.textContent = soundOn ? '🔊' : '🔇';
+      if (soundOn) playClick();
+    });
+
+    // ---------- Formatting ----------
+    function fmt(usd: number): string {
+      return dogeMode ? formatDoge(usd) : formatUsd(usd);
+    }
+
+    // ---------- Confetti ----------
+    const confettiCanvas = document.getElementById('confetti-canvas') as HTMLCanvasElement;
+    function fireConfetti() {
+      const ctx = confettiCanvas.getContext('2d');
+      if (!ctx) return;
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+      const colors = ['#FFC630', '#16A34A', '#E0328B', '#3FA9F5', '#B388FF'];
+      const pieces = Array.from({ length: 90 }, () => ({
+        x: Math.random() * confettiCanvas.width,
+        y: -20 - Math.random() * confettiCanvas.height * 0.3,
+        w: 6 + Math.random() * 6,
+        h: 8 + Math.random() * 8,
+        vy: 2 + Math.random() * 3,
+        vx: -1.5 + Math.random() * 3,
+        rot: Math.random() * Math.PI,
+        vr: -0.2 + Math.random() * 0.4,
+        color: colors[Math.floor(Math.random() * colors.length)],
+      }));
+      const start = performance.now();
+      function frame(now: number) {
+        const elapsed = now - start;
+        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        for (const p of pieces) {
+          p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        }
+        if (elapsed < 2200) requestAnimationFrame(frame);
+        else ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    // ---------- Toasts ----------
+    function showToast(message: string) {
+      const container = document.getElementById('toast-container')!;
+      const toast = document.createElement('div');
+      toast.className =
+        'ticket-stub animate-toast-in pointer-events-auto rounded px-4 py-2 text-center font-display text-sm font-bold';
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.transition = 'opacity 0.4s ease';
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 400);
+      }, 3000);
+    }
+
+    // ---------- Screen shake ----------
+    function shakeScreen() {
+      document.body.classList.remove('animate-shake');
+      void document.body.offsetWidth;
+      document.body.classList.add('animate-shake');
     }
 
     // ---------- Rendering ----------
     const balanceEl = document.getElementById('balance')!;
     const balancePercentEl = document.getElementById('balance-percent')!;
-    const fuelGaugeEl = document.getElementById('fuel-gauge')!;
+    const fortuneMeterEl = document.getElementById('fortune-meter')!;
+    const spendTierEl = document.getElementById('spend-tier')!;
     const secretSlot = document.getElementById('secret-slot')!;
-
-    function fmt(usd: number): string {
-      return dogeMode ? formatDoge(usd) : formatUsd(usd);
-    }
 
     function render() {
       balanceEl.textContent = fmt(state.balance);
+      balanceEl.classList.toggle('text-debit', state.balance < 0);
       const remaining = percentRemaining(state);
-      balancePercentEl.textContent = `${remaining.toFixed(4)}%`;
-      fuelGaugeEl.style.width = `${Math.max(remaining, 0)}%`;
+      balancePercentEl.textContent = `${Math.max(remaining, 0).toFixed(4)}% left`;
+      fortuneMeterEl.style.width = `${Math.min(Math.max(remaining, 0), 100)}%`;
+      fortuneMeterEl.classList.remove('bg-credit', 'bg-amber', 'bg-debit');
+      fortuneMeterEl.classList.add(remaining < 20 ? 'bg-debit' : remaining < 50 ? 'bg-amber' : 'bg-credit');
 
-      fuelGaugeEl.classList.remove(
-        'from-cyan-500', 'to-emerald-500', 'from-orange-500', 'to-rose-500'
-      );
-      if (remaining < 20) {
-        fuelGaugeEl.classList.add('from-orange-500', 'to-rose-500');
-        balanceEl.classList.remove('text-emerald-400');
-        balanceEl.classList.add('text-orange-400');
-      } else {
-        fuelGaugeEl.classList.add('from-cyan-500', 'to-emerald-500');
-        balanceEl.classList.remove('text-orange-400');
-        balanceEl.classList.add('text-emerald-400');
-      }
+      const spent = amountSpent(state);
+      spendTierEl.textContent = spent > 0 ? getSpendTier(state) : '';
 
       for (const item of ITEMS) {
         const priceEl = document.getElementById(`price-${item.id}`);
@@ -409,24 +506,13 @@ const description =
         if (countEl) countEl.textContent = `x${owned}`;
         if (card) {
           const buyBtn = card.querySelector('.buy-btn') as HTMLButtonElement | null;
-          const sellBtn = card.querySelector('.sell-btn') as HTMLButtonElement | null;
-          const qty = resolveQty(item, 'buy');
+          const qtyInput = card.querySelector('.qty-input') as HTMLInputElement | null;
+          const qty = Math.max(1, Math.floor(Number(qtyInput?.value) || 1));
           if (buyBtn) buyBtn.disabled = !canAfford(state, item, qty);
-          if (sellBtn) sellBtn.disabled = owned <= 0;
         }
       }
 
       renderSecretSlot();
-    }
-
-    function resolveQty(item: ShopItem, action: 'buy' | 'sell'): number {
-      if (multiplier === 'MAX') {
-        if (action === 'buy') {
-          return item.price > 0 ? Math.floor(state.balance / item.price) : 0;
-        }
-        return state.counts[item.id] ?? 0;
-      }
-      return multiplier;
     }
 
     function renderSecretSlot() {
@@ -437,121 +523,161 @@ const description =
       }
       secretSlot.classList.remove('hidden');
       const secret = buildSecretItem(state);
-      const owned = state.secretPurchased ? 1 : 0;
       secretSlot.innerHTML = `
-        <h2 class="mb-3 font-mono-hud text-sm uppercase tracking-widest text-rose-400">Classified</h2>
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <article class="hud-corners rounded-lg border border-rose-500/40 bg-slate-950/60 p-4">
-            <div class="flex items-start justify-between">
-              <span class="text-3xl">${secret.emoji}</span>
-              <span class="rounded-full border border-rose-700 px-2 py-0.5 text-[10px] font-mono-hud text-rose-400">x${owned}</span>
-            </div>
-            <h3 class="mt-2 text-sm font-semibold text-slate-100">${secret.name}</h3>
-            <p class="mt-1 text-xs text-slate-500">${secret.flavor}</p>
-            <div class="mt-3 font-mono-hud text-base text-rose-400">${fmt(secret.price)}</div>
-            <button id="secret-buy" type="button" class="mt-3 w-full rounded border border-rose-500/50 py-1.5 text-xs font-mono-hud uppercase text-rose-300 hover:bg-rose-500/10 disabled:cursor-not-allowed disabled:opacity-30" ${state.secretPurchased ? 'disabled' : ''}>
-              ${state.secretPurchased ? 'Deployed' : 'Buy'}
-            </button>
-          </article>
-        </div>
+        <h2 class="mb-3 font-display text-sm font-bold uppercase tracking-widest text-pop-pink">Classified</h2>
+        <article class="shop-card brutal flex max-w-sm flex-col gap-2 rounded-xl border-2 border-line bg-ink p-5 text-void" style="--accent:#E0328B">
+          <div class="flex items-start justify-between">
+            <span class="text-3xl">${secret.emoji}</span>
+            <span class="ticket-stub rounded px-2 py-1 font-mono-hud text-[10px] font-bold">${state.secretPurchased ? 'DEPLOYED' : 'x0'}</span>
+          </div>
+          <h3 class="font-display text-sm font-bold">${secret.name}</h3>
+          <p class="text-xs text-void/60">${secret.flavor}</p>
+          <div class="mt-1 font-mono-hud text-base font-bold text-pop-pink">${fmt(secret.price)}</div>
+          <button id="secret-buy" type="button" class="brutal mt-2 w-full rounded-md border-2 border-line bg-amber px-3.5 py-2 font-display text-xs font-bold text-ink disabled:cursor-not-allowed disabled:opacity-40" ${state.secretPurchased ? 'disabled' : ''}>
+            ${state.secretPurchased ? 'Deployed' : 'Buy'}
+          </button>
+        </article>
       `;
       document.getElementById('secret-buy')?.addEventListener('click', () => {
         const fresh = buildSecretItem(state);
         state = purchase(state, fresh, 1);
-        playLaunchRumble();
+        playRumble();
+        shakeScreen();
+        fireConfetti();
         afterStateChange();
       });
     }
 
-    // ---------- Achievements ----------
     function afterStateChange() {
       const newly = checkNewAchievements(state);
       state = withUnlockedAchievements(state, newly);
-      for (const a of newly) showToast(`${a.emoji} ${a.label}`);
+      for (const a of newly) showToast(`🏆 ${a.emoji} ${a.label}`);
       render();
     }
 
-    function showToast(message: string) {
-      const container = document.getElementById('toast-container')!;
-      const toast = document.createElement('div');
-      toast.className =
-        'pointer-events-auto animate-[fadeIn_0.2s_ease-out] rounded border border-emerald-500/50 bg-slate-950/95 px-4 py-2 text-center font-mono-hud text-xs text-emerald-300 shadow-lg';
-      toast.textContent = `ACHIEVEMENT UNLOCKED: ${message}`;
-      container.appendChild(toast);
-      setTimeout(() => {
-        toast.style.transition = 'opacity 0.4s ease';
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 400);
-      }, 3200);
-    }
+    // ---------- Category tabs ----------
+    document.querySelectorAll('.tab-btn').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach((t) => {
+          t.setAttribute('aria-pressed', 'false');
+          t.classList.remove('bg-amber', 'text-ink');
+          t.classList.add('bg-void-raised', 'text-ink/70');
+        });
+        tab.setAttribute('aria-pressed', 'true');
+        tab.classList.add('bg-amber', 'text-ink');
+        tab.classList.remove('bg-void-raised', 'text-ink/70');
+        activeCategory = tab.getAttribute('data-category') || 'all';
+        document.querySelectorAll<HTMLElement>('.shop-card').forEach((card) => {
+          const show = activeCategory === 'all' || card.dataset.category === activeCategory;
+          card.classList.toggle('hidden', !show);
+        });
+      });
+    });
 
-    // ---------- Event wiring ----------
-    document.getElementById('mission-title')?.addEventListener('click', () => {
+    // ---------- Shop cards ----------
+    document.querySelectorAll<HTMLElement>('.shop-card').forEach((card) => {
+      const id = card.dataset.itemId!;
+      const item = itemsById.get(id);
+      if (!item) return;
+      const qtyInput = card.querySelector('.qty-input') as HTMLInputElement;
+      const maxBtn = card.querySelector('.max-btn') as HTMLButtonElement;
+      const buyBtn = card.querySelector('.buy-btn') as HTMLButtonElement;
+
+      maxBtn.addEventListener('click', () => {
+        qtyInput.value = String(Math.max(1, getMaxAffordableQty(state, item)));
+        render();
+      });
+      qtyInput.addEventListener('input', render);
+      buyBtn.addEventListener('click', () => {
+        const qty = Math.max(1, Math.floor(Number(qtyInput.value) || 1));
+        if (!canAfford(state, item, qty)) return;
+        state = purchase(state, item, qty);
+        item.price >= 1_000_000_000 ? playRumble() : playCoin();
+        if (item.price * qty >= state.startingBalance * 0.05) shakeScreen();
+        const btn = buyBtn;
+        btn.classList.remove('animate-bump');
+        void btn.offsetWidth;
+        btn.classList.add('animate-bump');
+        afterStateChange();
+      });
+    });
+
+    // ---------- Secret: title tap 5x -> reveal "Your Mama" ----------
+    document.getElementById('title-tap')?.addEventListener('click', () => {
       const now = Date.now();
       titleTapTimes = [...titleTapTimes.filter((t) => now - t < 2000), now];
       if (titleTapTimes.length >= 5 && !state.secretRevealed) {
         state = { ...state, secretRevealed: true };
         titleTapTimes = [];
+        showToast('👀 You found a secret item.');
         render();
       }
     });
 
-    document.querySelectorAll('.multiplier-btn').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const val = btn.getAttribute('data-multiplier')!;
-        multiplier = val === 'MAX' ? 'MAX' : (parseInt(val.replace('x', ''), 10) as number);
-        document.querySelectorAll('.multiplier-btn').forEach((b) => b.setAttribute('aria-pressed', 'false'));
-        btn.setAttribute('aria-pressed', 'true');
-        render();
-      });
+    // ---------- Secret: logo tap 3x -> Money Rain mini-game ----------
+    document.getElementById('logo-tap')?.addEventListener('click', () => {
+      const now = Date.now();
+      logoTapTimes = [...logoTapTimes.filter((t) => now - t < 1500), now];
+      if (logoTapTimes.length >= 3) {
+        logoTapTimes = [];
+        openRain();
+      }
     });
 
-    document.querySelectorAll('.buy-btn').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-item-id')!;
-        const item = itemsById.get(id);
-        if (!item) return;
-        const qty = resolveQty(item, 'buy');
-        if (qty <= 0) return;
-        const before = amountSpent(state);
-        state = purchase(state, item, qty);
-        if (before !== amountSpent(state)) {
-          item.price >= 1_000_000_000 ? playLaunchRumble() : playCoinChime();
-        }
-        afterStateChange();
-      });
+    // ---------- Secret cheat code: type "YOLO" -> Chaos Mode ----------
+    let cheatBuffer = '';
+    document.addEventListener('keydown', (e) => {
+      const target = e.target as HTMLElement;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return;
+      if (e.key.length !== 1) return;
+      cheatBuffer = (cheatBuffer + e.key).slice(-4).toUpperCase();
+      if (cheatBuffer === 'YOLO') {
+        cheatBuffer = '';
+        activateChaosMode();
+      }
     });
+    function activateChaosMode() {
+      document.body.classList.add('chaos-mode');
+      fireConfetti();
+      playJingle();
+      showToast('🎉 CHAOS MODE ACTIVATED');
+      setTimeout(() => document.body.classList.remove('chaos-mode'), 5000);
+    }
 
-    document.querySelectorAll('.sell-btn').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-item-id')!;
-        const item = itemsById.get(id);
-        if (!item) return;
-        const qty = resolveQty(item, 'sell');
-        if (qty <= 0) return;
-        state = sell(state, item, qty);
-        playClick();
-        render();
-      });
-    });
-
+    // ---------- Doge mode ----------
     document.getElementById('doge-toggle')?.addEventListener('click', () => {
       dogeMode = !dogeMode;
       const btn = document.getElementById('doge-toggle')!;
       const knob = document.getElementById('doge-toggle-knob')!;
       btn.setAttribute('aria-checked', String(dogeMode));
-      knob.style.transform = dogeMode ? 'translateX(20px)' : 'translateX(0)';
+      knob.style.transform = dogeMode ? 'translateX(16px)' : 'translateX(0)';
       playClick();
       render();
     });
 
-    document.getElementById('sound-toggle')?.addEventListener('click', () => {
-      soundOn = !soundOn;
-      const btn = document.getElementById('sound-toggle') as HTMLButtonElement;
-      btn.setAttribute('aria-pressed', String(soundOn));
-      btn.textContent = soundOn ? '🔊 SFX ON' : '🔇 SFX OFF';
-      if (soundOn) playClick();
-    });
+    // ---------- Reset ----------
+    const bestKey = 'hritr:best-buys';
+    function renderBestScore() {
+      const el = document.getElementById('best-score')!;
+      try {
+        const best = localStorage.getItem(bestKey);
+        el.textContent = best ? `Best: ${best} buys` : '';
+      } catch {
+        el.textContent = '';
+      }
+    }
+    function persistBestScore() {
+      const count = getItemCount(state);
+      if (count === 0) return;
+      try {
+        const prev = Number(localStorage.getItem(bestKey));
+        if (!prev || count < prev) localStorage.setItem(bestKey, String(count));
+        renderBestScore();
+      } catch {
+        /* localStorage unavailable — skip silently */
+      }
+    }
+    renderBestScore();
 
     document.getElementById('reset-btn')?.addEventListener('click', () => {
       state = resetState();
@@ -559,67 +685,317 @@ const description =
       render();
     });
 
-    // ---------- Receipt modal ----------
-    const modal = document.getElementById('receipt-modal') as HTMLDialogElement;
-    document.getElementById('open-receipt')?.addEventListener('click', () => {
-      renderReceipt();
-      modal.showModal();
-      playClick();
-    });
-    document.getElementById('close-receipt')?.addEventListener('click', () => modal.close());
+    // ---------- Checkout modal ----------
+    const checkoutOverlay = document.getElementById('checkout-overlay')!;
+    const checkoutKicker = document.getElementById('checkout-kicker')!;
+    const checkoutHeading = document.getElementById('checkout-heading')!;
+    const checkoutSummary = document.getElementById('checkout-summary')!;
+    const checkoutComparisons = document.getElementById('checkout-comparisons')!;
 
-    function renderReceipt() {
-      const lines: string[] = [];
-      lines.push('=== MISSION RECEIPT ===');
-      lines.push('');
-      if (state.log.length === 0) {
-        lines.push('No purchases yet.');
-      } else {
-        const totals = new Map<string, { name: string; qty: number; total: number }>();
-        for (const entry of state.log) {
-          const existing = totals.get(entry.itemId);
-          if (existing) {
-            existing.qty += entry.qty;
-            existing.total += entry.total;
-          } else {
-            totals.set(entry.itemId, { name: entry.name, qty: entry.qty, total: entry.total });
-          }
-        }
-        for (const t of totals.values()) {
-          lines.push(`${t.qty}x ${t.name} ....... ${fmt(t.total)}`);
-        }
-      }
-      lines.push('');
-      lines.push(`SPENT:     ${fmt(amountSpent(state))} (${percentSpent(state).toFixed(4)}%)`);
-      lines.push(`REMAINING: ${fmt(state.balance)}`);
-      lines.push('');
-      lines.push('Try it yourself \u2014 spend the fortune.');
-      const text = lines.join('\n');
-      const receiptEl = document.getElementById('receipt-text')!;
-      receiptEl.textContent = text;
-      receiptEl.dataset.raw = text;
+    const COMPARISON_BENCHMARKS = ['highway-overhaul', 'basketball-franchise', 'mega-mansion', 'value-meal']
+      .map((id) => itemsById.get(id))
+      .filter((i): i is ShopItem => !!i);
+
+    function getComparisons(totalSpent: number) {
+      return COMPARISON_BENCHMARKS.filter((i) => totalSpent >= i.price)
+        .slice(0, 2)
+        .map((i) => ({ count: Math.floor(totalSpent / i.price).toLocaleString('en-US'), label: i.name.toLowerCase() + 's' }));
     }
 
-    document.getElementById('copy-receipt')?.addEventListener('click', async () => {
-      const raw = document.getElementById('receipt-text')!.dataset.raw ?? '';
-      try {
-        await navigator.clipboard.writeText(raw);
-        const btn = document.getElementById('copy-receipt')!;
-        const original = btn.textContent;
-        btn.textContent = 'Copied!';
-        setTimeout(() => (btn.textContent = original), 1500);
-      } catch {
-        // Clipboard API unavailable — receipt text remains selectable in the <pre>.
+    function openCheckout() {
+      const total = amountSpent(state);
+      const boughtSecret = state.secretPurchased;
+      const seconds = getElapsedSeconds(state);
+      const tier = getSpendTier(state);
+
+      if (total <= 0) {
+        checkoutKicker.textContent = 'Checkout';
+        checkoutHeading.textContent = "You haven't bought anything yet.";
+        checkoutSummary.textContent = 'Go pick something ridiculous, then come back.';
+        checkoutComparisons.innerHTML = '';
+      } else if (boughtSecret) {
+        checkoutKicker.textContent = 'Achievement unlocked 💀';
+        checkoutHeading.textContent = 'You bought Your Mama.';
+        checkoutSummary.textContent = 'There is nothing left to say. Legendary run.';
+      } else {
+        checkoutKicker.textContent = state.balance < 0 ? 'Over budget 🚨' : 'Checkout';
+        checkoutHeading.textContent = state.balance < 0 ? 'You spent it all — and then some.' : "Here's the damage.";
+        checkoutSummary.textContent =
+          `You spent ${fmt(total)} across ${getItemCount(state)} purchases in ${seconds}s. Status: ${tier}.`;
       }
+
+      checkoutComparisons.innerHTML = '';
+      for (const c of getComparisons(total)) {
+        const li = document.createElement('li');
+        li.textContent = `= ${c.count} ${c.label}`;
+        checkoutComparisons.appendChild(li);
+      }
+      if (total > 0) persistBestScore();
+      checkoutOverlay.classList.remove('hidden');
+      checkoutOverlay.classList.add('flex');
+      if (total > 0) fireConfetti();
+    }
+    function closeCheckout() {
+      checkoutOverlay.classList.add('hidden');
+      checkoutOverlay.classList.remove('flex');
+    }
+    document.getElementById('checkout-open')?.addEventListener('click', openCheckout);
+    document.getElementById('checkout-keep-shopping')?.addEventListener('click', closeCheckout);
+    document.getElementById('checkout-start-over')?.addEventListener('click', () => {
+      state = resetState();
+      render();
+      closeCheckout();
+    });
+
+    document.getElementById('checkout-download')?.addEventListener('click', () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 600;
+      canvas.height = 750;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      ctx.fillStyle = '#fff4de';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#1a1508';
+      ctx.textAlign = 'center';
+      ctx.font = 'bold 22px sans-serif';
+      ctx.fillText('SPENDING RECEIPT', canvas.width / 2, 60);
+      ctx.font = '12px monospace';
+      ctx.fillText('HOW RICH IS TOO RICH', canvas.width / 2, 82);
+
+      ctx.strokeStyle = '#e3b95c';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(40, 105);
+      ctx.lineTo(canvas.width - 40, 105);
+      ctx.stroke();
+
+      ctx.textAlign = 'left';
+      ctx.font = '13px monospace';
+      let y = 135;
+      const totals = new Map<string, { name: string; total: number }>();
+      for (const entry of state.log) {
+        const existing = totals.get(entry.itemId);
+        if (existing) existing.total += entry.total;
+        else totals.set(entry.itemId, { name: entry.name, total: entry.total });
+      }
+      const sorted = [...totals.values()].sort((a, b) => b.total - a.total).slice(0, 12);
+      for (const t of sorted) {
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#1a1508';
+        ctx.fillText(t.name.slice(0, 38), 40, y);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = t.total < 0 ? '#16a34a' : '#1a1508';
+        ctx.fillText(`${t.total < 0 ? '+' : '-'}${formatUsd(Math.abs(t.total))}`, canvas.width - 40, y);
+        y += 24;
+      }
+
+      ctx.beginPath();
+      ctx.moveTo(40, y + 10);
+      ctx.lineTo(canvas.width - 40, y + 10);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.font = 'bold 18px sans-serif';
+      ctx.fillStyle = '#1a1508';
+      ctx.textAlign = 'left';
+      ctx.fillText('TOTAL SPENT', 40, y + 45);
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#e11d3c';
+      ctx.fillText(formatUsd(amountSpent(state)), canvas.width - 40, y + 45);
+
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#1a1508';
+      ctx.font = '12px monospace';
+      ctx.fillText('Played at How Rich Is Too Rich', canvas.width / 2, canvas.height - 30);
+
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'spending-receipt.png';
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+    });
+
+    // ---------- Lucky Spin mini-game ----------
+    const SPIN_COST = 20_000_000_000; // $20B entry fee, illustrative
+    const SPIN_SEGMENTS = [
+      { mult: 0, label: 'BUST' },
+      { mult: 0.5, label: '0.5x' },
+      { mult: 1, label: '1x' },
+      { mult: 1, label: '1x' },
+      { mult: 2, label: '2x' },
+      { mult: 3, label: '3x' },
+      { mult: 5, label: '5x' },
+      { mult: 10, label: 'JACKPOT 10x' },
+    ];
+    const spinOverlay = document.getElementById('spin-overlay')!;
+    const spinReel = document.getElementById('spin-reel')!;
+    const spinResult = document.getElementById('spin-result')!;
+    const spinBtn = document.getElementById('spin-btn') as HTMLButtonElement;
+    const REEL_ITEM_HEIGHT = 56;
+
+    document.getElementById('spin-cost-label')!.textContent = formatUsd(SPIN_COST);
+
+    function openSpin() {
+      spinResult.textContent = '';
+      spinReel.style.transition = 'none';
+      spinReel.style.transform = 'translateY(0px)';
+      spinReel.innerHTML = SPIN_SEGMENTS.slice(0, 6)
+        .map((s) => `<div style="height:${REEL_ITEM_HEIGHT}px" class="flex items-center justify-center font-display text-sm font-bold">${s.label}</div>`)
+        .join('');
+      spinBtn.disabled = !canAfford(state, { price: SPIN_COST } as ShopItem, 1);
+      spinOverlay.classList.remove('hidden');
+      spinOverlay.classList.add('flex');
+      playClick();
+    }
+    function closeSpin() {
+      spinOverlay.classList.add('hidden');
+      spinOverlay.classList.remove('flex');
+    }
+    document.getElementById('spin-open')?.addEventListener('click', openSpin);
+    document.getElementById('spin-close')?.addEventListener('click', closeSpin);
+
+    spinBtn.addEventListener('click', () => {
+      if (state.balance < SPIN_COST) return;
+      spinBtn.disabled = true;
+      spinResult.textContent = '';
+
+      const weightedPool = [0, 1, 2, 2, 3, 3, 4, 4, 5, 6, 7]; // biases toward small/mid outcomes
+      const chosenIndex = weightedPool[Math.floor(Math.random() * weightedPool.length)];
+      const chosen = SPIN_SEGMENTS[chosenIndex];
+
+      const stripLength = 24;
+      const targetPos = stripLength - 4;
+      const strip: typeof SPIN_SEGMENTS = [];
+      for (let i = 0; i < stripLength; i++) {
+        strip.push(i === targetPos ? chosen : SPIN_SEGMENTS[Math.floor(Math.random() * SPIN_SEGMENTS.length)]);
+      }
+      spinReel.innerHTML = strip
+        .map((s) => `<div style="height:${REEL_ITEM_HEIGHT}px" class="flex items-center justify-center font-display text-sm font-bold">${s.label}</div>`)
+        .join('');
+      spinReel.style.transition = 'none';
+      spinReel.style.transform = 'translateY(0px)';
+      void spinReel.offsetWidth;
+
+      state = applyDelta(state, '🎰 Lucky Spin (entry)', -SPIN_COST);
+      render();
+
+      requestAnimationFrame(() => {
+        spinReel.style.transition = 'transform 2.4s cubic-bezier(0.12, 0.9, 0.2, 1)';
+        spinReel.style.transform = `translateY(-${targetPos * REEL_ITEM_HEIGHT}px)`;
+      });
+
+      setTimeout(() => {
+        const winnings = Math.round(SPIN_COST * chosen.mult);
+        if (winnings > 0) state = applyDelta(state, `🎰 Lucky Spin (${chosen.label})`, winnings);
+        afterStateChange();
+        if (chosen.mult >= 5) {
+          fireConfetti();
+          playJingle();
+          spinResult.textContent = `🎉 ${chosen.label}! Won ${formatUsd(winnings)}`;
+        } else if (chosen.mult > 1) {
+          playCoin();
+          spinResult.textContent = `Nice — ${chosen.label}, won ${formatUsd(winnings)}`;
+        } else if (chosen.mult === 1) {
+          playClick();
+          spinResult.textContent = `Broke even. Try again?`;
+        } else {
+          playSad();
+          spinResult.textContent = chosen.mult === 0 ? 'Bust! Lost it all.' : `Lost some — ${chosen.label}`;
+        }
+        spinBtn.disabled = !canAfford(state, { price: SPIN_COST } as ShopItem, 1);
+      }, 2500);
+    });
+
+    // ---------- Money Rain mini-game ----------
+    const rainOverlay = document.getElementById('rain-overlay')!;
+    const rainField = document.getElementById('rain-field')!;
+    const rainTimerEl = document.getElementById('rain-timer')!;
+    const rainScoreEl = document.getElementById('rain-score')!;
+    const rainStartBtn = document.getElementById('rain-start') as HTMLButtonElement;
+    let rainScore = 0;
+    let rainSpawnTimer: number | null = null;
+    let rainCountdownTimer: number | null = null;
+
+    const RAIN_PICKUPS = [
+      { emoji: '💵', min: 2_000_000, max: 10_000_000, weight: 6 },
+      { emoji: '💰', min: 10_000_000, max: 40_000_000, weight: 3 },
+      { emoji: '💎', min: 100_000_000, max: 300_000_000, weight: 1 },
+    ];
+    function pickRainType() {
+      const pool = RAIN_PICKUPS.flatMap((p) => Array(p.weight).fill(p));
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function openRain() {
+      rainScore = 0;
+      rainScoreEl.textContent = '$0';
+      rainTimerEl.textContent = '8';
+      rainField.innerHTML = '';
+      rainStartBtn.classList.remove('hidden');
+      rainOverlay.classList.remove('hidden');
+      rainOverlay.classList.add('flex');
+      playClick();
+    }
+    function closeRain() {
+      rainOverlay.classList.add('hidden');
+      rainOverlay.classList.remove('flex');
+      if (rainSpawnTimer) clearInterval(rainSpawnTimer);
+      if (rainCountdownTimer) clearInterval(rainCountdownTimer);
+      if (rainScore > 0) {
+        state = applyDelta(state, '💰 Money Rain bonus', rainScore);
+        afterStateChange();
+        showToast(`💰 Money Rain bonus: +${formatUsd(rainScore)}`);
+      }
+    }
+    document.getElementById('rain-close')?.addEventListener('click', closeRain);
+
+    rainStartBtn.addEventListener('click', () => {
+      rainStartBtn.classList.add('hidden');
+      let timeLeft = 8;
+      rainTimerEl.textContent = String(timeLeft);
+      rainCountdownTimer = window.setInterval(() => {
+        timeLeft -= 1;
+        rainTimerEl.textContent = String(Math.max(timeLeft, 0));
+        if (timeLeft <= 0) {
+          if (rainSpawnTimer) clearInterval(rainSpawnTimer);
+          if (rainCountdownTimer) clearInterval(rainCountdownTimer);
+          rainField.innerHTML = `<div class="flex h-full items-center justify-center font-display text-sm font-bold">Time's up! +${formatUsd(rainScore)}</div>`;
+          setTimeout(closeRain, 1200);
+        }
+      }, 1000);
+
+      rainSpawnTimer = window.setInterval(() => {
+        const pickup = pickRainType();
+        const el = document.createElement('button');
+        el.type = 'button';
+        el.textContent = pickup.emoji;
+        el.className = 'absolute text-3xl';
+        el.style.left = `${5 + Math.random() * 85}%`;
+        el.style.top = '-10%';
+        const duration = 2.2 + Math.random() * 1.2;
+        el.style.transition = `top ${duration}s linear`;
+        rainField.appendChild(el);
+        requestAnimationFrame(() => {
+          el.style.top = '105%';
+        });
+        const amount = Math.round(pickup.min + Math.random() * (pickup.max - pickup.min));
+        const timeoutId = setTimeout(() => el.remove(), duration * 1000 + 50);
+        el.addEventListener('click', () => {
+          clearTimeout(timeoutId);
+          rainScore += amount;
+          rainScoreEl.textContent = formatUsd(rainScore);
+          playCoin();
+          el.remove();
+        });
+      }, 500);
     });
 
     render();
   </script>
 </Layout>
-
-<style>
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-</style>

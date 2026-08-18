@@ -29,6 +29,7 @@ export interface GameState {
   unlockedAchievements: string[];
   secretRevealed: boolean;
   secretPurchased: boolean;
+  startedAt: number;
 }
 
 export interface Achievement {
@@ -63,6 +64,7 @@ export function createInitialState(startingBalance: number = STARTING_NET_WORTH)
     unlockedAchievements: [],
     secretRevealed: false,
     secretPurchased: false,
+    startedAt: Date.now(),
   };
 }
 
@@ -81,6 +83,11 @@ export function percentRemaining(state: GameState): number {
 
 export function canAfford(state: GameState, item: ShopItem, qty: number): boolean {
   return qty > 0 && item.price * qty <= state.balance;
+}
+
+export function getMaxAffordableQty(state: GameState, item: ShopItem): number {
+  if (item.price <= 0) return 0;
+  return Math.max(0, Math.floor(state.balance / item.price));
 }
 
 export function purchase(state: GameState, item: ShopItem, qty: number): GameState {
@@ -104,21 +111,53 @@ export function purchase(state: GameState, item: ShopItem, qty: number): GameSta
   };
 }
 
-export function sell(state: GameState, item: ShopItem, qty: number): GameState {
-  const owned = state.counts[item.id] ?? 0;
-  const sellQty = Math.min(qty, owned);
-  if (sellQty <= 0) return state;
-  const refund = item.price * sellQty;
-  const nextCounts = { ...state.counts, [item.id]: owned - sellQty };
+/** Generic balance adjustment for mini-game wins/losses — logged, but not tied to a shop item. */
+export function applyDelta(state: GameState, label: string, delta: number): GameState {
+  const entry: PurchaseLogEntry = {
+    itemId: `minigame:${label}`,
+    name: label,
+    unitPrice: delta,
+    qty: 1,
+    total: delta,
+    timestamp: Date.now(),
+  };
   return {
     ...state,
-    balance: state.balance + refund,
-    counts: nextCounts,
+    balance: state.balance + delta,
+    log: [...state.log, entry],
   };
 }
 
 export function reset(startingBalance: number = STARTING_NET_WORTH): GameState {
   return createInitialState(startingBalance);
+}
+
+export function getElapsedSeconds(state: GameState): number {
+  return Math.max(0, Math.round((Date.now() - state.startedAt) / 1000));
+}
+
+export function getItemCount(state: GameState): number {
+  return Object.values(state.counts).reduce((sum, n) => sum + n, 0);
+}
+
+const SPEND_TIERS: { min: number; label: string }[] = [
+  { min: 0, label: 'Window Shopping' },
+  { min: 0.001, label: 'Casual Browser' },
+  { min: 1, label: 'Getting Warmed Up' },
+  { min: 10, label: 'Serious Spender' },
+  { min: 25, label: 'Big Baller' },
+  { min: 50, label: 'Fortune Crusher' },
+  { min: 75, label: 'Nearly Broke' },
+  { min: 100, label: 'Legendary Overspender' },
+];
+
+export function getSpendTier(state: GameState): string {
+  const pct = percentSpent(state);
+  let label = SPEND_TIERS[0].label;
+  for (const tier of SPEND_TIERS) {
+    if (pct >= tier.min) label = tier.label;
+  }
+  return label;
 }
 
 /** Returns achievements newly crossed since the last check (does not mutate state). */

@@ -71,30 +71,58 @@ remake:
 
 ---
 
-## 3. Design System — SpaceX "Mission Control" Telemetry HUD
+## 3. Design System — "Carnival Poster"
  
-Superseded the earlier receipt/cash-register direction. Locked visual identity as of this
-remake:
+- **Aesthetic:** Bright, warm, comic-book toy — a game-show set, not a dashboard. Flat color
+  only, no gradients/glow/glassmorphism.
+- **Color palette:** Cream background `#FFFBF2`, white raised cards `#FFFFFF`, ticket paper
+  `#FFF4DE`, near-black ink `#1A1508` for text and borders, amber `#FFC630` primary accent,
+  green `#16A34A` / red `#E11D3C` for credit/debit, pink `#E0328B` extra-fun accent. Category
+  accents: Vehicles `#3FA9F5`, Real Estate `#2FE3B4`, Companies `#B388FF`, Space `#7C83FD`,
+  Absurd `#FF3D8F`.
+- **Signature UI trick:** `.brutal` utility — thick 2px black border + hard 4px offset shadow
+  (no blur), wobble/rotate slightly on hover, press down on active. Applied to every card,
+  button, and modal panel.
+- **Typography:** Space Grotesk (display/headings), Inter (body), IBM Plex Mono (numbers/
+  receipts), loaded via Google Fonts CDN.
+- **Item art:** Emoji only, unchanged principle — zero licensing risk.
+- **Item names:** Generic/parody descriptions only, unchanged — no real brand names or
+  trademarks.
+- **Motion:** Bump/wobble on purchase, screen-shake on big spends (≥5% of starting balance),
+  confetti burst on checkout and big wins, bouncy sticker-style toasts. `prefers-reduced-motion`
+  respected globally.
+
+## 4. Game Design Spec
  
-- **Aesthetic:** Dark-mode sci-fi command console inspired by SpaceX Starship touchscreen
-  controls and Linear/Vercel design systems. Clean, high-contrast, zero "AI slop."
-- **Color Palette:**
-  - Background: Deep space black `#030712` with Slate-950/900 paneling.
-  - Telemetry colors: Emerald Green `#10b981`, Cyber Cyan `#06b6d4`, Crisp White `#f8fafc`.
-  - Warning/alert: Mars Orange `#f97316` → Rose `#f43f5e` when balance drops below 20%.
-- **UI details:** HUD corner-bracket accents, glowing 1px cyan borders, monospace tabular-nums
-  counters (JetBrains Mono), light glass/backdrop-blur on the sticky header only (not stacked
-  everywhere — restraint matters).
-- **Typography:** Inter for body, JetBrains Mono for all numeric/telemetry readouts. Max 2
-  font families, per Playbook default.
-- **Item art:** Emoji icons only (unchanged principle from prior design pass — zero licensing
-  risk, no real photos/logos).
-- **Item names:** Generic/parody descriptions only — no real brand names, product names, or
-  trademarks (e.g. "Angular Electric Pickup," not the real vehicle name; "Struggling Social
-  Platform," not the real platform name). This is a deliberate trademark-risk mitigation,
-  stricter than the doc-4 draft spec that named real products.
-- **Motion:** Purposeful only — fuel gauge transitions, achievement toast slide-in, receipt
-  modal open/close. No decorative ambient animation. `prefers-reduced-motion` respected globally.
+- **Starting value:** unchanged — flat $1,000,000,000,000, illustrative estimate.
+- **Shop items:** unchanged dataset (~20 items, $10–$500B, generic/parody names, 5 categories).
+- **Core loop:** Category tabs filter the shop. Each card has a quantity input + MAX quick-fill
+  + Buy button (no Sell — matches the earlier "no forced game-over" decision; balance can go
+  negative, nothing locks). Player hits **Checkout** whenever done, opening a summary modal:
+  total spent, elapsed time, spend-tier label (Window Shopping → Legendary Overspender),
+  playful comparisons ("= X mega-mansions"), and a downloadable canvas-rendered receipt image.
+- **Achievements:** unchanged five-tier toast system based on total amount spent.
+- **Doge Mode:** unchanged display-only `$` ↔ `Ð` toggle.
+- **Sound FX:** unchanged synthesized Web Audio (click/coin/rumble/jingle/sad-trombone-ish
+  tone), global on/off toggle.
+- **Secrets (expanded this pass):**
+  - "Your Mama 💀" — tap the header title 5x quickly. Unchanged mechanic, restyled.
+  - **NEW** — tap the `$` logo icon 3x quickly to open the hidden **Money Rain** mini-game.
+  - **NEW** — type the word `YOLO` anywhere on the page (outside form inputs) to trigger
+    **Chaos Mode**: a 5-second rainbow hue-cycle + everything wobbling, for no reason other
+    than fun. No lasting effect on game state.
+- **Mini-games (new this pass):**
+  - **🎰 Lucky Spin** — always-visible header button. $20B entry fee (illustrative), spins a
+    slot-style reel weighted toward small/mid outcomes with a rare 10x jackpot. Net result
+    (loss or win) is logged as a receipt line item like any purchase.
+  - **💰 Money Rain** — hidden behind the logo-tap secret above. 8-second timed catch game:
+    falling 💵/💰/💎 emojis worth random bonus amounts (💎 rare and high-value). Tally is
+    added to balance as a bonus when the modal closes.
+- **Best score:** unchanged — fewest total buys, persisted in `localStorage`, shown next to
+  Reset.
+- **No dark patterns:** unchanged — no fake urgency, no forced email capture, no ad
+  interstitials blocking play. The mini-game "gambling" flavor is explicitly play-money and
+  framed as satire, not real-stakes mechanics.
 
 ---
 
