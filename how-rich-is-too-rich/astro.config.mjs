@@ -5,9 +5,8 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // TODO: replace with your real domain once purchased (Phase 4).
-  // sitemap + canonical tags both depend on this being correct.
-  site: 'https://example.com',
+  // Real domain — update here once and every page's canonical/OG/sitemap URL follows.
+  site: 'https://how-rich-is-too-rich.com',
   integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()],

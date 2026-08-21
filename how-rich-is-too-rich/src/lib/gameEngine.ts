@@ -27,6 +27,7 @@ export interface GameState {
   counts: Record<string, number>;
   log: PurchaseLogEntry[];
   unlockedAchievements: string[];
+  unlockedMilestones: string[];
   secretRevealed: boolean;
   secretPurchased: boolean;
   startedAt: number;
@@ -36,6 +37,14 @@ export interface Achievement {
   id: string;
   thresholdSpent: number; // USD amount spent to trigger
   label: string;
+  emoji: string;
+}
+
+export interface WealthMilestone {
+  id: string;
+  threshold: number; // USD current balance to trigger
+  title: string;
+  subtitle: string;
   emoji: string;
 }
 
@@ -53,6 +62,26 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: 'zero', thresholdSpent: 1_000_000_000_000, label: 'Zero Balance Achievement', emoji: '💸' },
 ];
 
+// Wealth milestones are checked against current BALANCE, not amount spent — they're only
+// reachable by winning big in the mini-games (mainly Double or Nothing's exponential chain),
+// since spending alone can never push balance above the starting amount.
+export const WEALTH_MILESTONES: WealthMilestone[] = [
+  {
+    id: 'century',
+    threshold: 10_000_000_000_000,
+    title: 'Richest Person of the Century',
+    subtitle: 'Awarded for building a fortune of',
+    emoji: '👑',
+  },
+  {
+    id: 'goat',
+    threshold: 100_000_000_000_000,
+    title: 'The Richest Person Who Will Ever Exist',
+    subtitle: 'Awarded for the almost-impossible fortune of',
+    emoji: '🏆',
+  },
+];
+
 export const SECRET_ITEM_ID = 'secret-mama';
 
 export function createInitialState(startingBalance: number = STARTING_NET_WORTH): GameState {
@@ -62,6 +91,7 @@ export function createInitialState(startingBalance: number = STARTING_NET_WORTH)
     counts: {},
     log: [],
     unlockedAchievements: [],
+    unlockedMilestones: [],
     secretRevealed: false,
     secretPurchased: false,
     startedAt: Date.now(),
@@ -173,6 +203,21 @@ export function withUnlockedAchievements(state: GameState, newly: Achievement[])
   return {
     ...state,
     unlockedAchievements: [...state.unlockedAchievements, ...newly.map((a) => a.id)],
+  };
+}
+
+/** Returns wealth milestones newly crossed since the last check (does not mutate state). */
+export function checkNewMilestones(state: GameState): WealthMilestone[] {
+  return WEALTH_MILESTONES.filter(
+    (m) => state.balance >= m.threshold && !state.unlockedMilestones.includes(m.id)
+  );
+}
+
+export function withUnlockedMilestones(state: GameState, newly: WealthMilestone[]): GameState {
+  if (newly.length === 0) return state;
+  return {
+    ...state,
+    unlockedMilestones: [...state.unlockedMilestones, ...newly.map((m) => m.id)],
   };
 }
 

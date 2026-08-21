@@ -7,7 +7,10 @@ export interface FaqItem {
 export interface Props {
   title: string;
   description: string;
-  canonicalUrl: string;
+  // Either works: pass `path` (e.g. "/disclaimer") and canonical is built from
+  // astro.config.mjs's `site`, or pass a full `canonicalUrl` to override.
+  path?: string;
+  canonicalUrl?: string;
   ogImage?: string;
   faqItems?: FaqItem[];
 }
@@ -15,10 +18,14 @@ export interface Props {
 const {
   title,
   description,
+  path = '/',
   canonicalUrl,
   ogImage = '/og-image.png',
   faqItems = [],
 } = Astro.props;
+
+const siteBase = Astro.site ?? new URL('https://how-rich-is-too-rich.com/');
+const resolvedCanonical = canonicalUrl ?? new URL(path, siteBase).toString();
 
 const faqSchema =
   faqItems.length > 0
@@ -46,14 +53,14 @@ const faqSchema =
 
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonicalUrl} />
+    <link rel="canonical" href={resolvedCanonical} />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:url" content={resolvedCanonical} />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />

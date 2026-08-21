@@ -25,9 +25,19 @@ const faqItems = [
       'Doge Mode is a playful display toggle that converts every price and the running balance into a fictional Dogecoin-style unit at a fixed illustrative rate, purely for fun.',
   },
   {
+    question: 'What are the Lucky Spin and Money Rain mini-games?',
+    answer:
+      "Lucky Spin is a quick gamble on your fortune — pay an entry fee, spin, and win a multiplier up to a rare 100x jackpot. Money Rain is a timed catching game with falling cash bonuses. Both are play-money only, just for fun.",
+  },
+  {
     question: 'Are there any secrets in this game?',
     answer:
-      "Yes. There are hidden bonus mini-games and at least one secret item tucked into the interface — try clicking around, and see if a certain word unlocks something extra.",
+      "Yes — several. There's a legendary hidden item, at least two hidden mini-games, and a couple of magic words that do something if you type them while browsing. Hints start appearing on their own the longer you stick around.",
+  },
+  {
+    question: 'Is it really possible to become the richest person of the century?',
+    answer:
+      "Technically, yes — if you're lucky enough to chain enough wins in the right mini-game, your fortune can grow past the starting $1 trillion into the trillions and beyond, unlocking a downloadable, shareable certificate. It's rare by design.",
   },
   {
     question: "What happens when I run out of money?",
@@ -38,72 +48,38 @@ const faqItems = [
 
 const title = "Spend Elon Musk's Money — Billionaire Spending Simulator Game";
 const description =
-  "Spend a satirical $1 trillion fortune on rockets, mansions, and absurd purchases, spin the Lucky Wheel, and hunt for secrets — a free, 100% client-side billionaire spending game.";
+  "Spend a satirical $1 trillion fortune, spin the Lucky Wheel, chase secret achievements, and try to become the richest person of the century — a free, 100% client-side billionaire spending game.";
 ---
 
-<Layout
-  title={title}
-  description={description}
-  canonicalUrl="https://example.com/"
-  faqItems={faqItems}
->
+<Layout title={title} description={description} path="/" faqItems={faqItems}>
   <!-- ============ HEADER ============ -->
   <header class="sticky top-0 z-40 border-b-2 border-line bg-void/95 backdrop-blur">
     <div class="mx-auto max-w-6xl px-4 py-3 sm:px-6">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-2.5">
-          <button
-            id="logo-tap"
-            type="button"
-            aria-label="How Rich Is Too Rich"
-            class="ticket-stub flex h-9 w-9 items-center justify-center rounded font-display text-base font-black"
-          >
+          <button id="logo-tap" type="button" aria-label="How Rich Is Too Rich" class="ticket-stub flex h-9 w-9 items-center justify-center rounded font-display text-base font-black">
             $
           </button>
-          <button
-            id="title-tap"
-            type="button"
-            class="select-none font-display text-base font-bold text-ink sm:text-lg"
-          >
+          <button id="title-tap" type="button" class="select-none font-display text-base font-bold text-ink sm:text-lg">
             How Rich Is Too Rich
           </button>
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
-          <button
-            id="spin-open"
-            type="button"
-            class="brutal rounded-md border-2 border-line bg-cat-companies px-3 py-1.5 font-display text-xs font-bold text-ink"
-            style="--accent:#1a1508"
-          >
+          <button id="spin-open" type="button" class="brutal rounded-md border-2 border-line bg-cat-companies px-3 py-1.5 font-display text-xs font-bold text-ink" style="--accent:#1a1508">
             🎰 Lucky Spin
           </button>
           <label class="flex items-center gap-1.5 rounded-md border-2 border-line bg-void-raised px-2 py-1.5 text-xs font-mono-hud">
             <span>$</span>
-            <button
-              id="doge-toggle"
-              type="button"
-              role="switch"
-              aria-checked="false"
-              class="relative h-5 w-9 rounded-full border-2 border-line bg-void"
-            >
+            <button id="doge-toggle" type="button" role="switch" aria-checked="false" class="relative h-5 w-9 rounded-full border-2 border-line bg-void">
               <span id="doge-toggle-knob" class="absolute left-0.5 top-0.5 h-3 w-3 rounded-full bg-pop-pink transition-transform"></span>
             </button>
             <span>Ð</span>
           </label>
-          <button
-            id="sound-toggle"
-            type="button"
-            aria-pressed="true"
-            class="rounded-md border-2 border-line bg-void-raised px-2 py-1.5 text-xs font-mono-hud"
-          >
+          <button id="sound-toggle" type="button" aria-pressed="true" class="rounded-md border-2 border-line bg-void-raised px-2 py-1.5 text-xs font-mono-hud">
             🔊
           </button>
-          <button
-            id="checkout-open"
-            type="button"
-            class="brutal rounded-md border-2 border-line bg-amber px-4 py-1.5 font-display text-xs font-bold text-ink"
-          >
+          <button id="checkout-open" type="button" class="brutal rounded-md border-2 border-line bg-amber px-4 py-1.5 font-display text-xs font-bold text-ink">
             🧾 Checkout
           </button>
         </div>
@@ -112,9 +88,9 @@ const description =
       <div class="mt-3 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p class="font-mono-hud text-[10px] uppercase tracking-widest text-ink/50">Remaining Fortune</p>
-          <div id="balance" class="font-display text-3xl font-black leading-none text-ink sm:text-4xl">
+          <button id="balance-tap" type="button" class="block font-display text-3xl font-black leading-none text-ink sm:text-4xl">
             {formatUsd(STARTING_NET_WORTH)}
-          </div>
+          </button>
           <p id="spend-tier" class="mt-1 font-mono-hud text-[11px] font-bold uppercase tracking-wide text-pop-pink"></p>
         </div>
         <div class="w-full max-w-xs sm:w-56">
@@ -158,37 +134,18 @@ const description =
           data-category={item.category}
         >
           <div class="flex items-start justify-between gap-2">
-            <span
-              class="flex h-14 w-14 items-center justify-center rounded-lg text-3xl"
-              style={`background:color-mix(in srgb, var(--color-cat-${item.category.toLowerCase().replace(' ', '-')}) 18%, transparent)`}
-              aria-hidden="true"
-            >
+            <span class="flex h-14 w-14 items-center justify-center rounded-lg text-3xl" style={`background:color-mix(in srgb, var(--color-cat-${item.category.toLowerCase().replace(' ', '-')}) 18%, transparent)`} aria-hidden="true">
               {item.emoji}
             </span>
-            <span id={`count-${item.id}`} class="ticket-stub inline-block shrink-0 rounded px-2 py-1 font-mono-hud text-[10px] font-bold">
-              x0
-            </span>
+            <span id={`count-${item.id}`} class="ticket-stub inline-block shrink-0 rounded px-2 py-1 font-mono-hud text-[10px] font-bold">x0</span>
           </div>
           <h3 class="font-display text-sm font-bold leading-snug text-ink">{item.name}</h3>
           <p class="text-xs text-ink/50">{item.flavor}</p>
-          <div id={`price-${item.id}`} class="mt-1 font-mono-hud text-base font-bold text-ink">
-            {formatUsd(item.price)}
-          </div>
+          <div id={`price-${item.id}`} class="mt-1 font-mono-hud text-base font-bold text-ink">{formatUsd(item.price)}</div>
           <div class="mt-auto flex items-center gap-2 pt-2">
-            <input
-              type="number"
-              min="1"
-              value="1"
-              inputmode="numeric"
-              class="qty-input w-16 rounded-md border-2 border-line bg-void px-2 py-1.5 text-center font-mono-hud text-sm font-bold text-ink"
-              aria-label={`Quantity of ${item.name}`}
-            />
-            <button type="button" class="max-btn rounded-md border-2 border-line bg-void px-2 py-1.5 font-mono-hud text-[10px] font-bold text-ink">
-              MAX
-            </button>
-            <button type="button" class="buy-btn brutal ml-auto rounded-md border-2 border-line bg-amber px-3.5 py-1.5 font-display text-xs font-bold text-ink disabled:cursor-not-allowed disabled:opacity-30">
-              Buy
-            </button>
+            <input type="number" min="1" value="1" inputmode="numeric" class="qty-input w-16 rounded-md border-2 border-line bg-void px-2 py-1.5 text-center font-mono-hud text-sm font-bold text-ink" aria-label={`Quantity of ${item.name}`} />
+            <button type="button" class="max-btn rounded-md border-2 border-line bg-void px-2 py-1.5 font-mono-hud text-[10px] font-bold text-ink">MAX</button>
+            <button type="button" class="buy-btn brutal ml-auto rounded-md border-2 border-line bg-amber px-3.5 py-1.5 font-display text-xs font-bold text-ink disabled:cursor-not-allowed disabled:opacity-30">Buy</button>
           </div>
         </article>
       ))}
@@ -198,9 +155,7 @@ const description =
     <section id="secret-slot" class="mt-8 hidden" aria-live="polite"></section>
 
     <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
-      <button id="reset-btn" type="button" class="font-mono-hud text-xs text-ink/50 underline hover:text-pop-pink">
-        Reset Mission
-      </button>
+      <button id="reset-btn" type="button" class="font-mono-hud text-xs text-ink/50 underline hover:text-pop-pink">Reset Mission</button>
       <p id="best-score" class="font-mono-hud text-xs text-ink/40"></p>
     </div>
 
@@ -208,29 +163,31 @@ const description =
     <article class="prose mt-20 max-w-none border-t-2 border-dashed border-line-paper pt-12 text-ink/70">
       <h2 class="font-display text-xl font-bold text-ink">What Is the Spend Elon Musk's Money Simulator?</h2>
       <p>
-        This free browser game hands you a satirical fortune — a flat, illustrative $1 trillion
-        — and lets you spend it on everything from a value meal to a national highway overhaul
-        until it's gone. It's a lighthearted toy, not a financial tool or a real-time tracker.
-        Every price and item is fixed and hand-curated, and nothing here represents any real
-        company, product, or individual's actual holdings.
+        This free browser game started as a simple "spend Elon Musk's money" idea and has grown
+        into its own little universe: a satirical fortune — a flat, illustrative $1 trillion —
+        that you spend on everything from a value meal to a national highway overhaul, plus
+        mini-games, hidden secrets, and achievements most players will never see. It's a
+        lighthearted toy, not a financial tool or a real-time tracker. Nothing here represents
+        any real company, product, or individual's actual holdings.
       </p>
 
       <h2 class="font-display text-xl font-bold text-ink">Visualizing $1 Trillion: How Big Is That, Really?</h2>
       <p>
         A trillion dollars is a number most people can say but few can picture. If you spent a
         dollar every second, it would take over 31,000 years to burn through a trillion. This
-        game turns that abstraction into something tactile: watch a fortune drain in real time
-        as you buy rockets, mansions, sports franchises, and increasingly absurd purchases, and
-        see exactly how far that kind of money actually stretches.
+        game turns that abstraction into something tactile: watch a fortune drain in real time,
+        or — if luck is on your side in the right mini-game — watch it multiply into numbers
+        that don't really exist in real life at all.
       </p>
 
       <h2 class="font-display text-xl font-bold text-ink">How to Play</h2>
       <p>
         Set a quantity, hit MAX to auto-fill the most you can afford, then Buy. Filter the shop
-        by category using the tabs up top. Spin the Lucky Wheel for a quick gamble with your
-        fortune, toggle Doge Mode for a silly currency switch, and keep an eye out for hidden
-        extras — this game has more than one secret. When you're done, hit Checkout for a full
-        breakdown and a downloadable receipt worth sharing.
+        by category using the tabs up top. Spin the Lucky Wheel for a quick gamble, toggle Doge
+        Mode for a silly currency switch, and keep an eye — and an ear — out for hidden extras.
+        The longer you stay on the page, the more hints you'll earn about what's hiding where.
+        When you're done, hit Checkout for a full breakdown and a downloadable receipt worth
+        sharing.
       </p>
 
       <h2 class="font-display text-xl font-bold text-ink">Frequently Asked Questions</h2>
@@ -247,6 +204,17 @@ const description =
         ))}
       </div>
 
+      <!-- ============ EASTER EGG TEASER ============ -->
+      <div class="not-prose mt-10 rounded-xl border-2 border-line bg-ink p-6 text-center text-void">
+        <p class="font-display text-lg font-bold">🥚 Easter Egg Hunt</p>
+        <p class="mx-auto mt-2 max-w-xl text-sm text-void/70">
+          This game is hiding more than a shop. There's a legendary secret item, a couple of
+          hidden mini-games, a magic word or two, and two absurd wealth achievements that almost
+          nobody will ever unlock. Nothing is spelled out — but if you stick around, hints will
+          start finding <em>you</em>. Can you find them all?
+        </p>
+      </div>
+
       <p class="mt-8 text-xs text-ink/40">
         Not affiliated with, endorsed by, or sponsored by any real individual or company. Net
         worth figures are illustrative, publicly-sourced estimates used for entertainment
@@ -254,6 +222,15 @@ const description =
       </p>
     </article>
   </main>
+
+  <!-- ============ HINT BOX ============ -->
+  <button id="hint-toggle" type="button" class="brutal ticket-stub fixed bottom-4 left-4 z-40 hidden rounded-full px-4 py-2 font-display text-xs font-bold" style="--accent:#1a1508">
+    💡 Hints <span id="hint-count"></span>
+  </button>
+  <div id="hint-panel" class="fixed bottom-16 left-4 z-40 hidden w-72 max-w-[85vw] rounded-lg border-2 border-line bg-paper p-4">
+    <p class="font-display text-xs font-bold uppercase tracking-widest text-ink">Hints</p>
+    <ul id="hint-list" class="mt-2 space-y-2 text-xs text-ink/70"></ul>
+  </div>
 
   <!-- ============ TOASTS ============ -->
   <div id="toast-container" class="pointer-events-none fixed bottom-4 left-1/2 z-50 flex w-full max-w-sm -translate-x-1/2 flex-col items-center gap-2 px-4" aria-live="polite"></div>
@@ -269,15 +246,9 @@ const description =
       <p class="mt-3 text-sm" id="checkout-summary"></p>
       <ul class="mt-3 space-y-1 font-mono-hud text-xs text-ink/70" id="checkout-comparisons"></ul>
       <div class="mt-6 grid grid-cols-2 gap-2">
-        <button id="checkout-keep-shopping" type="button" class="brutal rounded-md border-2 border-line bg-void-raised px-4 py-2 font-display text-xs font-bold text-ink">
-          Keep shopping
-        </button>
-        <button id="checkout-start-over" type="button" class="brutal rounded-md border-2 border-line bg-void-raised px-4 py-2 font-display text-xs font-bold text-ink">
-          Start over
-        </button>
-        <button id="checkout-download" type="button" class="brutal col-span-2 rounded-md border-2 border-line bg-amber px-4 py-2 font-display text-sm font-bold text-ink">
-          📥 Download receipt
-        </button>
+        <button id="checkout-keep-shopping" type="button" class="brutal rounded-md border-2 border-line bg-void-raised px-4 py-2 font-display text-xs font-bold text-ink">Keep shopping</button>
+        <button id="checkout-start-over" type="button" class="brutal rounded-md border-2 border-line bg-void-raised px-4 py-2 font-display text-xs font-bold text-ink">Start over</button>
+        <button id="checkout-download" type="button" class="brutal col-span-2 rounded-md border-2 border-line bg-amber px-4 py-2 font-display text-sm font-bold text-ink">📥 Download receipt</button>
       </div>
     </div>
   </div>
@@ -289,18 +260,13 @@ const description =
         <h2 class="font-display text-xl font-bold">🎰 Lucky Spin</h2>
         <button id="spin-close" type="button" class="text-ink/50 hover:text-pop-pink" aria-label="Close">✕</button>
       </div>
-      <p class="mt-1 text-xs text-ink/60">Entry fee: <span id="spin-cost-label" class="font-mono-hud font-bold"></span>. Win up to 10x.</p>
-
+      <p class="mt-1 text-xs text-ink/60">Entry fee: <span id="spin-cost-label" class="font-mono-hud font-bold"></span>. Win up to 100x.</p>
       <div class="relative mt-4 h-14 overflow-hidden rounded-md border-2 border-line bg-void">
         <div id="spin-reel" class="absolute left-0 top-0 w-full"></div>
         <div class="pointer-events-none absolute inset-x-0 top-1/2 h-14 -translate-y-1/2 border-y-2 border-dashed border-pop-pink"></div>
       </div>
-
       <p id="spin-result" class="mt-3 min-h-[1.5rem] text-center font-display text-sm font-bold"></p>
-
-      <button id="spin-btn" type="button" class="brutal mt-4 w-full rounded-md border-2 border-line bg-amber px-4 py-2 font-display text-sm font-bold text-ink disabled:cursor-not-allowed disabled:opacity-40">
-        Spin
-      </button>
+      <button id="spin-btn" type="button" class="brutal mt-4 w-full rounded-md border-2 border-line bg-amber px-4 py-2 font-display text-sm font-bold text-ink disabled:cursor-not-allowed disabled:opacity-40">Spin</button>
     </div>
   </div>
 
@@ -312,13 +278,68 @@ const description =
         <button id="rain-close" type="button" class="text-ink/50 hover:text-pop-pink" aria-label="Close">✕</button>
       </div>
       <div class="mt-1 flex items-center justify-between font-mono-hud text-xs">
-        <span>Time: <span id="rain-timer">8</span>s</span>
+        <span>Time: <span id="rain-timer">10</span>s</span>
         <span>Bonus: <span id="rain-score">$0</span></span>
       </div>
+      <p class="mt-1 text-[11px] text-ink/50">Just hover or tap the falling money — no precision clicking required.</p>
       <div id="rain-field" class="relative mt-3 h-96 w-full overflow-hidden rounded-md border-2 border-line bg-void"></div>
-      <button id="rain-start" type="button" class="brutal mt-4 w-full rounded-md border-2 border-line bg-amber px-4 py-2 font-display text-sm font-bold text-ink">
-        Start catching!
-      </button>
+      <button id="rain-start" type="button" class="brutal mt-4 w-full rounded-md border-2 border-line bg-amber px-4 py-2 font-display text-sm font-bold text-ink">Start catching!</button>
+    </div>
+  </div>
+
+  <!-- ============ DOUBLE OR NOTHING VAULT (secret — tap balance 4x) ============ -->
+  <div id="dbl-overlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/60 p-4 backdrop-blur-sm">
+    <div class="brutal animate-wobble-in relative w-full max-w-sm bg-void-raised p-6 text-ink" style="--accent:#1a1508">
+      <div class="flex items-center justify-between">
+        <h2 class="font-display text-xl font-bold">🃏 Double or Nothing</h2>
+        <button id="dbl-close" type="button" class="text-ink/50 hover:text-pop-pink" aria-label="Close">✕</button>
+      </div>
+      <p class="mt-1 text-xs text-ink/60">Stake it, flip, and either double your pot or lose it all. Cash out anytime.</p>
+
+      <div id="dbl-stake-screen" class="mt-4">
+        <label class="block font-mono-hud text-[10px] uppercase tracking-widest text-ink/50">Stake amount</label>
+        <input id="dbl-stake-input" type="number" min="1" class="mt-1 w-full rounded-md border-2 border-line bg-void px-3 py-2 font-mono-hud text-sm font-bold text-ink" />
+        <button id="dbl-lock-in" type="button" class="brutal mt-3 w-full rounded-md border-2 border-line bg-amber px-4 py-2 font-display text-sm font-bold text-ink">Lock It In</button>
+      </div>
+
+      <div id="dbl-play-screen" class="mt-4 hidden text-center">
+        <p class="font-mono-hud text-[10px] uppercase tracking-widest text-ink/50">Current pot</p>
+        <p id="dbl-pot" class="font-display text-2xl font-black text-credit">$0</p>
+        <p id="dbl-streak" class="mt-1 font-mono-hud text-xs text-ink/50"></p>
+        <div class="mt-4 grid grid-cols-2 gap-2">
+          <button id="dbl-flip" type="button" class="brutal rounded-md border-2 border-line bg-cat-companies px-4 py-2 font-display text-sm font-bold text-ink">Flip 🪙</button>
+          <button id="dbl-cashout" type="button" class="brutal rounded-md border-2 border-line bg-credit px-4 py-2 font-display text-sm font-bold text-ink">Cash Out</button>
+        </div>
+        <p id="dbl-result" class="mt-3 min-h-[1.5rem] font-display text-sm font-bold"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MYSTERY CHEST (secret — type "CHEST") ============ -->
+  <div id="chest-overlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/60 p-4 backdrop-blur-sm">
+    <div class="brutal animate-wobble-in relative w-full max-w-sm bg-void-raised p-6 text-center text-ink" style="--accent:#1a1508">
+      <div class="flex items-center justify-between">
+        <h2 class="font-display text-xl font-bold">🎁 Mystery Chest</h2>
+        <button id="chest-close" type="button" class="text-ink/50 hover:text-pop-pink" aria-label="Close">✕</button>
+      </div>
+      <div id="chest-emoji" class="mt-4 text-6xl">🎁</div>
+      <p id="chest-result" class="mt-3 min-h-[1.5rem] font-display text-sm font-bold"></p>
+      <button id="chest-open" type="button" class="brutal mt-4 w-full rounded-md border-2 border-line bg-amber px-4 py-2 font-display text-sm font-bold text-ink disabled:cursor-not-allowed disabled:opacity-40">Open Chest!</button>
+    </div>
+  </div>
+
+  <!-- ============ CERTIFICATE MODAL (10T / 100T / 100-min) ============ -->
+  <div id="cert-overlay" class="fixed inset-0 z-[70] hidden items-center justify-center bg-ink/70 p-4 backdrop-blur-sm">
+    <div class="brutal animate-wobble-in relative w-full max-w-lg bg-void-raised p-5 text-ink" style="--accent:#E0328B">
+      <div class="flex items-center justify-between">
+        <h2 id="cert-heading" class="font-display text-lg font-bold">Achievement Unlocked</h2>
+        <button id="cert-close" type="button" class="text-ink/50 hover:text-pop-pink" aria-label="Close">✕</button>
+      </div>
+      <canvas id="cert-canvas" class="mt-3 w-full rounded-md border-2 border-line"></canvas>
+      <div class="mt-4 grid grid-cols-2 gap-2">
+        <button id="cert-download" type="button" class="brutal rounded-md border-2 border-line bg-amber px-4 py-2 font-display text-xs font-bold text-ink">📥 Download</button>
+        <button id="cert-share" type="button" class="brutal rounded-md border-2 border-line bg-credit px-4 py-2 font-display text-xs font-bold text-ink">📤 Share</button>
+      </div>
     </div>
   </div>
 
@@ -335,6 +356,8 @@ const description =
       getMaxAffordableQty,
       checkNewAchievements,
       withUnlockedAchievements,
+      checkNewMilestones,
+      withUnlockedMilestones,
       buildSecretItem,
       formatUsd,
       formatDoge,
@@ -353,6 +376,7 @@ const description =
     let activeCategory = 'all';
     let titleTapTimes: number[] = [];
     let logoTapTimes: number[] = [];
+    let balanceTapTimes: number[] = [];
 
     // ---------- Web Audio (synthesized, no external files) ----------
     let audioCtx: AudioContext | null = null;
@@ -400,11 +424,9 @@ const description =
       osc.stop(ctx.currentTime + 1);
     }
     function playJingle() {
-      [660, 880, 1100, 1320].forEach((f, i) => setTimeout(() => tone(f, 0.18, 'triangle', 0.1), i * 90));
+      [660, 880, 1100, 1320, 1568].forEach((f, i) => setTimeout(() => tone(f, 0.2, 'triangle', 0.1), i * 90));
     }
-    function playSad() {
-      tone(220, 0.3, 'sawtooth', 0.08);
-    }
+    function playSad() { tone(220, 0.3, 'sawtooth', 0.08); }
 
     document.getElementById('sound-toggle')?.addEventListener('click', () => {
       soundOn = !soundOn;
@@ -426,7 +448,7 @@ const description =
       confettiCanvas.width = window.innerWidth;
       confettiCanvas.height = window.innerHeight;
       const colors = ['#FFC630', '#16A34A', '#E0328B', '#3FA9F5', '#B388FF'];
-      const pieces = Array.from({ length: 90 }, () => ({
+      const pieces = Array.from({ length: 100 }, () => ({
         x: Math.random() * confettiCanvas.width,
         y: -20 - Math.random() * confettiCanvas.height * 0.3,
         w: 6 + Math.random() * 6,
@@ -450,7 +472,7 @@ const description =
           ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
           ctx.restore();
         }
-        if (elapsed < 2200) requestAnimationFrame(frame);
+        if (elapsed < 2400) requestAnimationFrame(frame);
         else ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
       }
       requestAnimationFrame(frame);
@@ -460,8 +482,7 @@ const description =
     function showToast(message: string) {
       const container = document.getElementById('toast-container')!;
       const toast = document.createElement('div');
-      toast.className =
-        'ticket-stub animate-toast-in pointer-events-auto rounded px-4 py-2 text-center font-display text-sm font-bold';
+      toast.className = 'ticket-stub animate-toast-in pointer-events-auto rounded px-4 py-2 text-center font-display text-sm font-bold';
       toast.textContent = message;
       container.appendChild(toast);
       setTimeout(() => {
@@ -471,7 +492,6 @@ const description =
       }, 3000);
     }
 
-    // ---------- Screen shake ----------
     function shakeScreen() {
       document.body.classList.remove('animate-shake');
       void document.body.offsetWidth;
@@ -479,7 +499,7 @@ const description =
     }
 
     // ---------- Rendering ----------
-    const balanceEl = document.getElementById('balance')!;
+    const balanceEl = document.getElementById('balance-tap')!;
     const balancePercentEl = document.getElementById('balance-percent')!;
     const fortuneMeterEl = document.getElementById('fortune-meter')!;
     const spendTierEl = document.getElementById('spend-tier')!;
@@ -548,11 +568,18 @@ const description =
       });
     }
 
+    // ---------- Central "did anything just unlock" check ----------
     function afterStateChange() {
-      const newly = checkNewAchievements(state);
-      state = withUnlockedAchievements(state, newly);
-      for (const a of newly) showToast(`🏆 ${a.emoji} ${a.label}`);
+      const newlyAch = checkNewAchievements(state);
+      state = withUnlockedAchievements(state, newlyAch);
+      for (const a of newlyAch) showToast(`🏆 ${a.emoji} ${a.label}`);
+
+      const newlyMilestones = checkNewMilestones(state);
+      state = withUnlockedMilestones(state, newlyMilestones);
       render();
+      for (const m of newlyMilestones) {
+        openCertificate({ emoji: m.emoji, title: m.title, subtitle: m.subtitle, statValue: fmt(state.balance) });
+      }
     }
 
     // ---------- Category tabs ----------
@@ -594,15 +621,14 @@ const description =
         state = purchase(state, item, qty);
         item.price >= 1_000_000_000 ? playRumble() : playCoin();
         if (item.price * qty >= state.startingBalance * 0.05) shakeScreen();
-        const btn = buyBtn;
-        btn.classList.remove('animate-bump');
-        void btn.offsetWidth;
-        btn.classList.add('animate-bump');
+        buyBtn.classList.remove('animate-bump');
+        void buyBtn.offsetWidth;
+        buyBtn.classList.add('animate-bump');
         afterStateChange();
       });
     });
 
-    // ---------- Secret: title tap 5x -> reveal "Your Mama" ----------
+    // ---------- Secret 1: title tap 5x -> reveal "Your Mama" ----------
     document.getElementById('title-tap')?.addEventListener('click', () => {
       const now = Date.now();
       titleTapTimes = [...titleTapTimes.filter((t) => now - t < 2000), now];
@@ -614,7 +640,7 @@ const description =
       }
     });
 
-    // ---------- Secret: logo tap 3x -> Money Rain mini-game ----------
+    // ---------- Secret 2: logo tap 3x -> Money Rain ----------
     document.getElementById('logo-tap')?.addEventListener('click', () => {
       const now = Date.now();
       logoTapTimes = [...logoTapTimes.filter((t) => now - t < 1500), now];
@@ -624,16 +650,33 @@ const description =
       }
     });
 
-    // ---------- Secret cheat code: type "YOLO" -> Chaos Mode ----------
+    // ---------- Secret 3: balance tap 4x -> Double or Nothing ----------
+    document.getElementById('balance-tap')?.addEventListener('click', () => {
+      const now = Date.now();
+      balanceTapTimes = [...balanceTapTimes.filter((t) => now - t < 1500), now];
+      if (balanceTapTimes.length >= 4) {
+        balanceTapTimes = [];
+        openDouble();
+      }
+    });
+
+    // ---------- Secret cheat codes: typed words ----------
     let cheatBuffer = '';
+    const CHEAT_CODES: { word: string; action: () => void }[] = [
+      { word: 'YOLO', action: activateChaosMode },
+      { word: 'CHEST', action: openChest },
+    ];
     document.addEventListener('keydown', (e) => {
       const target = e.target as HTMLElement;
       if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return;
       if (e.key.length !== 1) return;
-      cheatBuffer = (cheatBuffer + e.key).slice(-4).toUpperCase();
-      if (cheatBuffer === 'YOLO') {
-        cheatBuffer = '';
-        activateChaosMode();
+      cheatBuffer = (cheatBuffer + e.key).slice(-10).toUpperCase();
+      for (const code of CHEAT_CODES) {
+        if (cheatBuffer.endsWith(code.word)) {
+          cheatBuffer = '';
+          code.action();
+          break;
+        }
       }
     });
     function activateChaosMode() {
@@ -655,7 +698,7 @@ const description =
       render();
     });
 
-    // ---------- Reset ----------
+    // ---------- Reset / best score ----------
     const bestKey = 'hritr:best-buys';
     function renderBestScore() {
       const el = document.getElementById('best-score')!;
@@ -720,8 +763,7 @@ const description =
       } else {
         checkoutKicker.textContent = state.balance < 0 ? 'Over budget 🚨' : 'Checkout';
         checkoutHeading.textContent = state.balance < 0 ? 'You spent it all — and then some.' : "Here's the damage.";
-        checkoutSummary.textContent =
-          `You spent ${fmt(total)} across ${getItemCount(state)} purchases in ${seconds}s. Status: ${tier}.`;
+        checkoutSummary.textContent = `You spent ${fmt(total)} across ${getItemCount(state)} purchases in ${seconds}s. Status: ${tier}.`;
       }
 
       checkoutComparisons.innerHTML = '';
@@ -808,7 +850,7 @@ const description =
       ctx.textAlign = 'center';
       ctx.fillStyle = '#1a1508';
       ctx.font = '12px monospace';
-      ctx.fillText('Played at How Rich Is Too Rich', canvas.width / 2, canvas.height - 30);
+      ctx.fillText('Played at howrichistoorich.com', canvas.width / 2, canvas.height - 30);
 
       canvas.toBlob((blob) => {
         if (!blob) return;
@@ -822,33 +864,40 @@ const description =
     });
 
     // ---------- Lucky Spin mini-game ----------
-    const SPIN_COST = 20_000_000_000; // $20B entry fee, illustrative
     const SPIN_SEGMENTS = [
       { mult: 0, label: 'BUST' },
       { mult: 0.5, label: '0.5x' },
       { mult: 1, label: '1x' },
-      { mult: 1, label: '1x' },
       { mult: 2, label: '2x' },
-      { mult: 3, label: '3x' },
       { mult: 5, label: '5x' },
-      { mult: 10, label: 'JACKPOT 10x' },
+      { mult: 10, label: '10x' },
+      { mult: 25, label: '25x' },
+      { mult: 50, label: '50x' },
+      { mult: 100, label: 'MEGA JACKPOT 100x' },
     ];
+    // Weighted toward small/mid outcomes; big multipliers are rare on purpose.
+    const SPIN_WEIGHTED_POOL = [0, 0, 1, 1, 2, 2, 2, 3, 3, 4, 4, 5, 5, 6, 7, 8];
     const spinOverlay = document.getElementById('spin-overlay')!;
     const spinReel = document.getElementById('spin-reel')!;
     const spinResult = document.getElementById('spin-result')!;
     const spinBtn = document.getElementById('spin-btn') as HTMLButtonElement;
     const REEL_ITEM_HEIGHT = 56;
+    let currentSpinCost = 0;
 
-    document.getElementById('spin-cost-label')!.textContent = formatUsd(SPIN_COST);
+    function getSpinCost(): number {
+      return Math.max(50_000_000_000, Math.round(state.balance * 0.02));
+    }
 
     function openSpin() {
+      currentSpinCost = getSpinCost();
+      document.getElementById('spin-cost-label')!.textContent = fmt(currentSpinCost);
       spinResult.textContent = '';
       spinReel.style.transition = 'none';
       spinReel.style.transform = 'translateY(0px)';
       spinReel.innerHTML = SPIN_SEGMENTS.slice(0, 6)
         .map((s) => `<div style="height:${REEL_ITEM_HEIGHT}px" class="flex items-center justify-center font-display text-sm font-bold">${s.label}</div>`)
         .join('');
-      spinBtn.disabled = !canAfford(state, { price: SPIN_COST } as ShopItem, 1);
+      spinBtn.disabled = state.balance < currentSpinCost;
       spinOverlay.classList.remove('hidden');
       spinOverlay.classList.add('flex');
       playClick();
@@ -861,12 +910,11 @@ const description =
     document.getElementById('spin-close')?.addEventListener('click', closeSpin);
 
     spinBtn.addEventListener('click', () => {
-      if (state.balance < SPIN_COST) return;
+      if (state.balance < currentSpinCost) return;
       spinBtn.disabled = true;
       spinResult.textContent = '';
 
-      const weightedPool = [0, 1, 2, 2, 3, 3, 4, 4, 5, 6, 7]; // biases toward small/mid outcomes
-      const chosenIndex = weightedPool[Math.floor(Math.random() * weightedPool.length)];
+      const chosenIndex = SPIN_WEIGHTED_POOL[Math.floor(Math.random() * SPIN_WEIGHTED_POOL.length)];
       const chosen = SPIN_SEGMENTS[chosenIndex];
 
       const stripLength = 24;
@@ -882,7 +930,8 @@ const description =
       spinReel.style.transform = 'translateY(0px)';
       void spinReel.offsetWidth;
 
-      state = applyDelta(state, '🎰 Lucky Spin (entry)', -SPIN_COST);
+      const cost = currentSpinCost;
+      state = applyDelta(state, '🎰 Lucky Spin (entry)', -cost);
       render();
 
       requestAnimationFrame(() => {
@@ -891,16 +940,16 @@ const description =
       });
 
       setTimeout(() => {
-        const winnings = Math.round(SPIN_COST * chosen.mult);
+        const winnings = Math.round(cost * chosen.mult);
         if (winnings > 0) state = applyDelta(state, `🎰 Lucky Spin (${chosen.label})`, winnings);
         afterStateChange();
-        if (chosen.mult >= 5) {
+        if (chosen.mult >= 25) {
           fireConfetti();
           playJingle();
-          spinResult.textContent = `🎉 ${chosen.label}! Won ${formatUsd(winnings)}`;
+          spinResult.textContent = `🎉 ${chosen.label}! Won ${fmt(winnings)}`;
         } else if (chosen.mult > 1) {
           playCoin();
-          spinResult.textContent = `Nice — ${chosen.label}, won ${formatUsd(winnings)}`;
+          spinResult.textContent = `Nice — ${chosen.label}, won ${fmt(winnings)}`;
         } else if (chosen.mult === 1) {
           playClick();
           spinResult.textContent = `Broke even. Try again?`;
@@ -908,11 +957,13 @@ const description =
           playSad();
           spinResult.textContent = chosen.mult === 0 ? 'Bust! Lost it all.' : `Lost some — ${chosen.label}`;
         }
-        spinBtn.disabled = !canAfford(state, { price: SPIN_COST } as ShopItem, 1);
+        currentSpinCost = getSpinCost();
+        document.getElementById('spin-cost-label')!.textContent = fmt(currentSpinCost);
+        spinBtn.disabled = state.balance < currentSpinCost;
       }, 2500);
     });
 
-    // ---------- Money Rain mini-game ----------
+    // ---------- Money Rain mini-game (easy mode: big targets, slow fall, hover-catch) ----------
     const rainOverlay = document.getElementById('rain-overlay')!;
     const rainField = document.getElementById('rain-field')!;
     const rainTimerEl = document.getElementById('rain-timer')!;
@@ -923,9 +974,9 @@ const description =
     let rainCountdownTimer: number | null = null;
 
     const RAIN_PICKUPS = [
-      { emoji: '💵', min: 2_000_000, max: 10_000_000, weight: 6 },
-      { emoji: '💰', min: 10_000_000, max: 40_000_000, weight: 3 },
-      { emoji: '💎', min: 100_000_000, max: 300_000_000, weight: 1 },
+      { emoji: '💵', min: 50_000_000, max: 200_000_000, weight: 6 },
+      { emoji: '💰', min: 500_000_000, max: 2_000_000_000, weight: 3 },
+      { emoji: '💎', min: 5_000_000_000, max: 20_000_000_000, weight: 1 },
     ];
     function pickRainType() {
       const pool = RAIN_PICKUPS.flatMap((p) => Array(p.weight).fill(p));
@@ -935,7 +986,7 @@ const description =
     function openRain() {
       rainScore = 0;
       rainScoreEl.textContent = '$0';
-      rainTimerEl.textContent = '8';
+      rainTimerEl.textContent = '10';
       rainField.innerHTML = '';
       rainStartBtn.classList.remove('hidden');
       rainOverlay.classList.remove('hidden');
@@ -950,14 +1001,14 @@ const description =
       if (rainScore > 0) {
         state = applyDelta(state, '💰 Money Rain bonus', rainScore);
         afterStateChange();
-        showToast(`💰 Money Rain bonus: +${formatUsd(rainScore)}`);
+        showToast(`💰 Money Rain bonus: +${fmt(rainScore)}`);
       }
     }
     document.getElementById('rain-close')?.addEventListener('click', closeRain);
 
     rainStartBtn.addEventListener('click', () => {
       rainStartBtn.classList.add('hidden');
-      let timeLeft = 8;
+      let timeLeft = 10;
       rainTimerEl.textContent = String(timeLeft);
       rainCountdownTimer = window.setInterval(() => {
         timeLeft -= 1;
@@ -965,20 +1016,22 @@ const description =
         if (timeLeft <= 0) {
           if (rainSpawnTimer) clearInterval(rainSpawnTimer);
           if (rainCountdownTimer) clearInterval(rainCountdownTimer);
-          rainField.innerHTML = `<div class="flex h-full items-center justify-center font-display text-sm font-bold">Time's up! +${formatUsd(rainScore)}</div>`;
+          rainField.innerHTML = `<div class="flex h-full items-center justify-center font-display text-sm font-bold">Time's up! +${fmt(rainScore)}</div>`;
           setTimeout(closeRain, 1200);
         }
       }, 1000);
 
+      // Spawns every 700ms; each item falls slowly over 4.5–6.5s and is large
+      // and forgiving to catch — fixes the earlier "too hard on a PC" version.
       rainSpawnTimer = window.setInterval(() => {
         const pickup = pickRainType();
         const el = document.createElement('button');
         el.type = 'button';
         el.textContent = pickup.emoji;
-        el.className = 'absolute text-3xl';
-        el.style.left = `${5 + Math.random() * 85}%`;
-        el.style.top = '-10%';
-        const duration = 2.2 + Math.random() * 1.2;
+        el.className = 'absolute p-3 text-6xl leading-none';
+        el.style.left = `${5 + Math.random() * 80}%`;
+        el.style.top = '-15%';
+        const duration = 4.5 + Math.random() * 2;
         el.style.transition = `top ${duration}s linear`;
         rainField.appendChild(el);
         requestAnimationFrame(() => {
@@ -986,15 +1039,372 @@ const description =
         });
         const amount = Math.round(pickup.min + Math.random() * (pickup.max - pickup.min));
         const timeoutId = setTimeout(() => el.remove(), duration * 1000 + 50);
-        el.addEventListener('click', () => {
+        const catchIt = () => {
           clearTimeout(timeoutId);
           rainScore += amount;
-          rainScoreEl.textContent = formatUsd(rainScore);
+          rainScoreEl.textContent = fmt(rainScore);
           playCoin();
           el.remove();
-        });
+        };
+        el.addEventListener('pointerdown', catchIt);
+        el.addEventListener('pointerenter', catchIt); // hover-catch — much easier with a mouse
+      }, 700);
+    });
+
+    // ---------- Double or Nothing Vault ----------
+    const dblOverlay = document.getElementById('dbl-overlay')!;
+    const dblStakeScreen = document.getElementById('dbl-stake-screen')!;
+    const dblPlayScreen = document.getElementById('dbl-play-screen')!;
+    const dblStakeInput = document.getElementById('dbl-stake-input') as HTMLInputElement;
+    const dblPotEl = document.getElementById('dbl-pot')!;
+    const dblStreakEl = document.getElementById('dbl-streak')!;
+    const dblResultEl = document.getElementById('dbl-result')!;
+    const dblFlipBtn = document.getElementById('dbl-flip') as HTMLButtonElement;
+    const dblCashoutBtn = document.getElementById('dbl-cashout') as HTMLButtonElement;
+    let dblPot = 0;
+    let dblStreak = 0;
+    let dblStaked = 0;
+
+    function openDouble() {
+      dblStakeScreen.classList.remove('hidden');
+      dblPlayScreen.classList.add('hidden');
+      dblResultEl.textContent = '';
+      dblStakeInput.value = String(Math.max(1, Math.round(state.balance * 0.05)));
+      dblStakeInput.max = String(Math.max(1, Math.floor(state.balance)));
+      dblOverlay.classList.remove('hidden');
+      dblOverlay.classList.add('flex');
+      playClick();
+    }
+    function closeDouble() {
+      if (dblPot > 0) {
+        // Walking away mid-run cashes out automatically rather than losing the pot silently.
+        state = applyDelta(state, '🃏 Double or Nothing (cash out)', dblPot);
+        afterStateChange();
+        dblPot = 0;
+      }
+      dblOverlay.classList.add('hidden');
+      dblOverlay.classList.remove('flex');
+    }
+    document.getElementById('dbl-close')?.addEventListener('click', closeDouble);
+
+    document.getElementById('dbl-lock-in')?.addEventListener('click', () => {
+      const stake = Math.max(1, Math.floor(Number(dblStakeInput.value) || 0));
+      if (stake > state.balance) return;
+      dblStaked = stake;
+      dblPot = stake;
+      dblStreak = 0;
+      state = applyDelta(state, '🃏 Double or Nothing (stake)', -stake);
+      render();
+      dblStakeScreen.classList.add('hidden');
+      dblPlayScreen.classList.remove('hidden');
+      dblPotEl.textContent = fmt(dblPot);
+      dblStreakEl.textContent = '';
+      dblResultEl.textContent = '';
+      playClick();
+    });
+
+    dblFlipBtn.addEventListener('click', () => {
+      dblFlipBtn.disabled = true;
+      dblCashoutBtn.disabled = true;
+      const won = Math.random() < 0.5;
+      setTimeout(() => {
+        if (won) {
+          dblPot *= 2;
+          dblStreak += 1;
+          dblPotEl.textContent = fmt(dblPot);
+          dblStreakEl.textContent = `🔥 ${dblStreak} win${dblStreak > 1 ? 's' : ''} in a row`;
+          dblResultEl.textContent = '🎉 Doubled! Flip again or cash out?';
+          playCoin();
+          if (dblStreak >= 4) fireConfetti();
+        } else {
+          dblResultEl.textContent = '💥 BUST! You lost the pot.';
+          dblPotEl.textContent = '$0';
+          playSad();
+          shakeScreen();
+          dblPot = 0;
+        }
+        dblFlipBtn.disabled = dblPot <= 0;
+        dblCashoutBtn.disabled = dblPot <= 0;
       }, 500);
     });
+
+    dblCashoutBtn.addEventListener('click', () => {
+      if (dblPot <= 0) return;
+      state = applyDelta(state, `🃏 Double or Nothing (${dblStreak}x streak)`, dblPot);
+      const won = dblPot;
+      dblPot = 0;
+      afterStateChange();
+      if (dblStreak >= 5) {
+        fireConfetti();
+        playJingle();
+      } else {
+        playCoin();
+      }
+      dblResultEl.textContent = `💰 Cashed out ${fmt(won)}!`;
+      dblFlipBtn.disabled = true;
+      dblCashoutBtn.disabled = true;
+      setTimeout(() => {
+        dblStakeScreen.classList.remove('hidden');
+        dblPlayScreen.classList.add('hidden');
+        dblStakeInput.value = String(Math.max(1, Math.round(state.balance * 0.05)));
+      }, 1400);
+    });
+
+    // ---------- Mystery Chest ----------
+    const chestOverlay = document.getElementById('chest-overlay')!;
+    const chestOpenBtn = document.getElementById('chest-open') as HTMLButtonElement;
+    const chestEmojiEl = document.getElementById('chest-emoji')!;
+    const chestResultEl = document.getElementById('chest-result')!;
+    const CHEST_PRIZES = [
+      { label: 'Small Bonus', min: 1_000_000_000, max: 5_000_000_000, weight: 6 },
+      { label: 'Medium Bonus', min: 10_000_000_000, max: 50_000_000_000, weight: 3 },
+      { label: 'Large Bonus', min: 100_000_000_000, max: 300_000_000_000, weight: 1 },
+    ];
+    let chestCooldownUntil = 0;
+    let chestCooldownTimer: number | null = null;
+
+    function openChest() {
+      chestResultEl.textContent = '';
+      chestEmojiEl.textContent = '🎁';
+      updateChestButton();
+      chestOverlay.classList.remove('hidden');
+      chestOverlay.classList.add('flex');
+      playClick();
+    }
+    function closeChest() {
+      chestOverlay.classList.add('hidden');
+      chestOverlay.classList.remove('flex');
+    }
+    document.getElementById('chest-close')?.addEventListener('click', closeChest);
+
+    function updateChestButton() {
+      const remaining = Math.ceil((chestCooldownUntil - Date.now()) / 1000);
+      if (remaining > 0) {
+        chestOpenBtn.disabled = true;
+        chestOpenBtn.textContent = `Next chest in ${remaining}s`;
+      } else {
+        chestOpenBtn.disabled = false;
+        chestOpenBtn.textContent = 'Open Chest!';
+        if (chestCooldownTimer) { clearInterval(chestCooldownTimer); chestCooldownTimer = null; }
+      }
+    }
+
+    chestOpenBtn.addEventListener('click', () => {
+      if (Date.now() < chestCooldownUntil) return;
+      chestOpenBtn.disabled = true;
+      chestEmojiEl.classList.remove('animate-shake');
+      void chestEmojiEl.offsetWidth;
+      chestEmojiEl.classList.add('animate-shake');
+      playClick();
+      setTimeout(() => {
+        const pool = CHEST_PRIZES.flatMap((p) => Array(p.weight).fill(p));
+        const prize = pool[Math.floor(Math.random() * pool.length)];
+        const amount = Math.round(prize.min + Math.random() * (prize.max - prize.min));
+        state = applyDelta(state, `🎁 Mystery Chest (${prize.label})`, amount);
+        afterStateChange();
+        chestEmojiEl.textContent = '✨';
+        chestResultEl.textContent = `${prize.label}: +${fmt(amount)}!`;
+        playCoin();
+        if (prize.label === 'Large Bonus') fireConfetti();
+        chestCooldownUntil = Date.now() + 60_000;
+        updateChestButton();
+        chestCooldownTimer = window.setInterval(updateChestButton, 1000);
+      }, 800);
+    });
+
+    // ---------- Certificates (10T / 100T / 100-minute time achievement) ----------
+    interface CertSpec { emoji: string; title: string; subtitle: string; statValue: string; extra?: string }
+    const certOverlay = document.getElementById('cert-overlay')!;
+    const certCanvas = document.getElementById('cert-canvas') as HTMLCanvasElement;
+    let lastCertCanvas: HTMLCanvasElement | null = null;
+
+    function wrapText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number) {
+      const words = text.split(' ');
+      let line = '';
+      let lines: string[] = [];
+      for (const word of words) {
+        const test = line ? `${line} ${word}` : word;
+        if (ctx.measureText(test).width > maxWidth && line) {
+          lines.push(line);
+          line = word;
+        } else {
+          line = test;
+        }
+      }
+      if (line) lines.push(line);
+      const startY = y - ((lines.length - 1) * lineHeight) / 2;
+      lines.forEach((l, i) => ctx.fillText(l, x, startY + i * lineHeight));
+    }
+
+    function drawCertificate(cert: CertSpec): HTMLCanvasElement {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1000;
+      canvas.height = 700;
+      const ctx = canvas.getContext('2d')!;
+
+      ctx.fillStyle = '#FFF4DE';
+      ctx.fillRect(0, 0, 1000, 700);
+
+      const grad = ctx.createLinearGradient(0, 0, 1000, 700);
+      grad.addColorStop(0, '#FFC630');
+      grad.addColorStop(0.5, '#E0328B');
+      grad.addColorStop(1, '#FFC630');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 14;
+      ctx.strokeRect(20, 20, 960, 660);
+      ctx.strokeStyle = '#1A1508';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(40, 40, 920, 620);
+
+      ctx.textAlign = 'center';
+      ctx.font = '90px sans-serif';
+      ctx.fillText(cert.emoji, 500, 150);
+
+      ctx.fillStyle = '#1A1508';
+      ctx.font = 'bold 26px sans-serif';
+      ctx.fillText('CERTIFICATE OF ACHIEVEMENT', 500, 205);
+
+      ctx.fillStyle = '#E0328B';
+      ctx.font = 'bold 42px sans-serif';
+      wrapText(ctx, cert.title, 500, 275, 820, 50);
+
+      ctx.fillStyle = '#1A1508';
+      ctx.font = '22px sans-serif';
+      ctx.fillText(cert.subtitle, 500, 400);
+
+      ctx.fillStyle = '#16A34A';
+      ctx.font = 'bold 46px monospace';
+      ctx.fillText(cert.statValue, 500, 455);
+
+      if (cert.extra) {
+        ctx.fillStyle = '#1A1508';
+        ctx.font = '18px sans-serif';
+        ctx.fillText(cert.extra, 500, 490);
+      }
+
+      ctx.fillStyle = 'rgba(26,21,8,0.6)';
+      ctx.font = '14px monospace';
+      ctx.fillText(new Date().toLocaleDateString(), 500, 545);
+
+      ctx.fillStyle = '#1A1508';
+      ctx.font = 'bold 22px sans-serif';
+      ctx.fillText(location.hostname || 'howrichistoorich.com', 500, 605);
+      ctx.fillStyle = 'rgba(26,21,8,0.6)';
+      ctx.font = '14px sans-serif';
+      ctx.fillText('Think you can beat this? Play now.', 500, 630);
+
+      return canvas;
+    }
+
+    function openCertificate(cert: CertSpec) {
+      fireConfetti();
+      playJingle();
+      shakeScreen();
+      const canvas = drawCertificate(cert);
+      lastCertCanvas = canvas;
+      certCanvas.width = canvas.width;
+      certCanvas.height = canvas.height;
+      certCanvas.getContext('2d')!.drawImage(canvas, 0, 0);
+      document.getElementById('cert-heading')!.textContent = cert.title;
+      certOverlay.classList.remove('hidden');
+      certOverlay.classList.add('flex');
+      showToast(`${cert.emoji} ${cert.title}!`);
+    }
+    document.getElementById('cert-close')?.addEventListener('click', () => {
+      certOverlay.classList.add('hidden');
+      certOverlay.classList.remove('flex');
+    });
+    document.getElementById('cert-download')?.addEventListener('click', () => {
+      if (!lastCertCanvas) return;
+      lastCertCanvas.toBlob((blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'certificate.png';
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+    });
+    document.getElementById('cert-share')?.addEventListener('click', async () => {
+      if (!lastCertCanvas) return;
+      const heading = document.getElementById('cert-heading')!.textContent || 'Achievement';
+      const shareText = `I just earned "${heading}" on How Rich Is Too Rich! Think you can beat me? ${location.origin}`;
+      lastCertCanvas.toBlob(async (blob) => {
+        if (!blob) return;
+        const file = new File([blob], 'certificate.png', { type: 'image/png' });
+        const nav = navigator as any;
+        if (nav.canShare && nav.canShare({ files: [file] })) {
+          try {
+            await nav.share({ title: heading, text: shareText, files: [file] });
+            return;
+          } catch {
+            /* user cancelled or share failed — fall through to download */
+          }
+        }
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'certificate.png';
+        a.click();
+        URL.revokeObjectURL(url);
+        try {
+          await navigator.clipboard.writeText(shareText);
+          showToast('📋 Caption copied — image downloaded!');
+        } catch {
+          showToast('📥 Certificate downloaded!');
+        }
+      });
+    });
+
+    // ---------- Timed hint box (15/30/45/60/80 min hints, 100-min achievement) ----------
+    const HINT_SCHEDULE: { minutes: number; text: string }[] = [
+      { minutes: 15, text: 'The header title isn\u2019t just decoration. Try clicking it several times, fast.' },
+      { minutes: 30, text: 'That \u201c$\u201d logo up top might enjoy a few quick taps too.' },
+      { minutes: 45, text: 'Words have power here. A certain 4-letter party word might do something if you type it.' },
+      { minutes: 60, text: 'Your balance number is more clickable than it looks. Try tapping it rapidly.' },
+      { minutes: 80, text: 'Not every secret word is about celebrating \u2014 one is about opening something. Try typing what you\u2019d want to open for a prize.' },
+    ];
+    const TIME_ACHIEVEMENT_MINUTES = 100;
+    const unlockedHints: string[] = [];
+    const hintToggle = document.getElementById('hint-toggle')!;
+    const hintPanel = document.getElementById('hint-panel')!;
+    const hintList = document.getElementById('hint-list')!;
+    const hintCount = document.getElementById('hint-count')!;
+
+    function renderHints() {
+      hintCount.textContent = String(unlockedHints.length);
+      hintList.innerHTML = unlockedHints.map((h) => `<li>\u2022 ${h}</li>`).join('');
+    }
+    function unlockHint(text: string) {
+      unlockedHints.push(text);
+      renderHints();
+      hintToggle.classList.remove('hidden');
+      showToast('💡 New hint unlocked!');
+      playClick();
+    }
+    hintToggle.addEventListener('click', () => {
+      hintPanel.classList.toggle('hidden');
+    });
+
+    let timeAchievementUnlocked = false;
+    function scheduleHints() {
+      HINT_SCHEDULE.forEach((h) => {
+        setTimeout(() => unlockHint(h.text), h.minutes * 60 * 1000);
+      });
+      setTimeout(() => {
+        if (timeAchievementUnlocked) return;
+        timeAchievementUnlocked = true;
+        openCertificate({
+          emoji: '⏱️',
+          title: 'Time Traveler',
+          subtitle: 'Awarded for spending',
+          statValue: '100 minutes',
+          extra: 'exploring How Rich Is Too Rich',
+        });
+      }, TIME_ACHIEVEMENT_MINUTES * 60 * 1000);
+    }
+    scheduleHints();
 
     render();
   </script>

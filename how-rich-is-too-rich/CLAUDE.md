@@ -94,36 +94,67 @@ remake:
 
 ## 4. Game Design Spec
  
-- **Starting value:** unchanged — flat $1,000,000,000,000, illustrative estimate.
-- **Shop items:** unchanged dataset (~20 items, $10–$500B, generic/parody names, 5 categories).
-- **Core loop:** Category tabs filter the shop. Each card has a quantity input + MAX quick-fill
-  + Buy button (no Sell — matches the earlier "no forced game-over" decision; balance can go
-  negative, nothing locks). Player hits **Checkout** whenever done, opening a summary modal:
-  total spent, elapsed time, spend-tier label (Window Shopping → Legendary Overspender),
-  playful comparisons ("= X mega-mansions"), and a downloadable canvas-rendered receipt image.
-- **Achievements:** unchanged five-tier toast system based on total amount spent.
-- **Doge Mode:** unchanged display-only `$` ↔ `Ð` toggle.
-- **Sound FX:** unchanged synthesized Web Audio (click/coin/rumble/jingle/sad-trombone-ish
-  tone), global on/off toggle.
-- **Secrets (expanded this pass):**
-  - "Your Mama 💀" — tap the header title 5x quickly. Unchanged mechanic, restyled.
-  - **NEW** — tap the `$` logo icon 3x quickly to open the hidden **Money Rain** mini-game.
-  - **NEW** — type the word `YOLO` anywhere on the page (outside form inputs) to trigger
-    **Chaos Mode**: a 5-second rainbow hue-cycle + everything wobbling, for no reason other
-    than fun. No lasting effect on game state.
-- **Mini-games (new this pass):**
-  - **🎰 Lucky Spin** — always-visible header button. $20B entry fee (illustrative), spins a
-    slot-style reel weighted toward small/mid outcomes with a rare 10x jackpot. Net result
-    (loss or win) is logged as a receipt line item like any purchase.
-  - **💰 Money Rain** — hidden behind the logo-tap secret above. 8-second timed catch game:
-    falling 💵/💰/💎 emojis worth random bonus amounts (💎 rare and high-value). Tally is
-    added to balance as a bonus when the modal closes.
-- **Best score:** unchanged — fewest total buys, persisted in `localStorage`, shown next to
-  Reset.
-- **No dark patterns:** unchanged — no fake urgency, no forced email capture, no ad
-  interstitials blocking play. The mini-game "gambling" flavor is explicitly play-money and
-  framed as satire, not real-stakes mechanics.
-
+- **Starting value / shop / core loop / achievements / Doge Mode / sound FX:** unchanged from
+  the prior pass (flat $1T start, ~20 generic-named items, category tabs, qty+MAX+Buy,
+  Checkout flow with spend-tier labels and downloadable receipt, 5-tier spend achievements,
+  Doge display toggle, synthesized Web Audio SFX).
+- **Secrets (5 total now):**
+  1. "Your Mama 💀" — tap the header title 5x quickly. Unchanged.
+  2. **Money Rain** mini-game — tap the `$` logo icon 3x quickly.
+  3. **Chaos Mode** (cosmetic only, 5s rainbow wobble) — type `YOLO` anywhere outside a form
+     field.
+  4. **Double or Nothing Vault** — tap the balance number 4x quickly.
+  5. **Mystery Chest** — type `CHEST` anywhere outside a form field.
+- **Mini-games (4 total now):**
+  - **🎰 Lucky Spin** (always visible, header button). Entry fee now **dynamic**: the greater
+    of $50B or 2% of current balance, so it stays meaningful even after a big win. Multiplier
+    ladder bumped: 0 / 0.5x / 1x / 2x / 5x / 10x / 25x / 50x / **100x MEGA JACKPOT** (rare,
+    weighted pool biased toward the low end).
+  - **💰 Money Rain** (secret). Rebalanced for playability on desktop: targets are much larger,
+    fall over 4.5–6.5s instead of ~3s, spawn less densely, and catch on **hover** as well as
+    click/tap — the earlier version was reported too hard to catch with a mouse. Payouts bumped
+    ~10x (💵 $50M–200M, 💰 $500M–2B, 💎 $5B–20B, weighted rare-to-common).
+  - **🃏 Double or Nothing Vault** (secret, new). Stake an amount, then flip a fair 50/50 coin:
+    win doubles the pot, lose forfeits it. Cash out anytime. This is the primary — and only
+    realistic — path to the wealth milestones below, since it's the one mechanic with genuine
+    exponential upside (an n-win streak multiplies the stake by 2ⁿ).
+  - **🎁 Mystery Chest** (secret, new). One-shot weighted bonus (Small/Medium/Large,
+    $1B–$300B), 60-second cooldown between opens to keep it a nice bonus rather than a free
+    money exploit.
+- **Wealth milestones — the "how rich is too rich" payoff (new):** checked against current
+  *balance*, not amount spent, since only mini-game winnings can push balance above the $1T
+  starting point.
+  - **$10T balance** → "Richest Person of the Century" 👑 — auto-opens a certificate modal.
+  - **$100T balance** → "The Richest Person Who Will Ever Exist" 🏆 — same treatment,
+    intentionally near-impossible (needs roughly an 11-win Double-or-Nothing streak from a
+    typical stake, ~0.05% per attempt).
+  - Both generate a **canvas-rendered certificate**: ornate gold/pink border, achievement
+    title, the amount reached, date, and the site's hostname printed directly on the image
+    plus a "Think you can beat this? Play now." line — so a downloaded/shared image carries
+    its own back-link even without a unique share URL (there's no backend to generate one).
+    Download button always available; Share button uses the Web Share API when supported
+    (mobile mostly) and falls back to download + clipboard-copied caption text otherwise.
+- **Time-based hint box + achievement (new):** a session timer (not persisted across reloads)
+  reveals one hint every so often, each pointing at one of the five secrets above without
+  fully spelling out the exact trigger:
+  - 15 min → hint toward "Your Mama"
+  - 30 min → hint toward Money Rain
+  - 45 min → hint toward Chaos Mode
+  - 60 min → hint toward Double or Nothing
+  - 80 min → hint toward Mystery Chest
+  - **100 min → not a hint, a reward:** the same certificate treatment as the wealth
+    milestones, titled "Time Traveler ⏱️". A floating "💡 Hints" button appears in the
+    bottom-left corner the moment the first hint unlocks (invisible before that) and opens a
+    small panel listing everything earned so far.
+- **Easter-egg teaser (new):** a dedicated block near the bottom of the page (below the FAQ)
+  explicitly invites players to hunt for "a legendary secret item, a couple of hidden
+  mini-games, a magic word or two, and two absurd wealth achievements" without listing exact
+  triggers, and mentions that hints "start finding you" the longer you stay — ties the whole
+  secrets system together for a curious/returning-visitor hook (also lengthens time-on-page,
+  which helps AdSense RPM per the original Playbook rationale).
+- **No dark patterns:** unchanged. All mini-game "gambling" is explicitly play-money,
+  cosmetic-outcome-only where it matters (Chaos Mode), and nothing gates content behind email
+  capture, forced waiting, or paid mechanics.
 ---
 
 ## 5. Programmatic SEO Plan
@@ -204,6 +235,15 @@ need to be regenerated.
 - Add `ads.txt` at domain root.
 - Monitor Core Web Vitals after ad script is added (ads are the #1 thing that tanks CWV — lazy-load below the fold).
 
+## Note for Section 7 (Execution Plan):
+ 
+This pass touched `astro.config.mjs`, `public/robots.txt`, `src/layouts/Layout.astro` (prop
+compatibility fix), `src/lib/gameEngine.ts` (added `WEALTH_MILESTONES`,
+`checkNewMilestones`/`withUnlockedMilestones`, `unlockedMilestones` state field), and
+`src/pages/index.astro` (all new mini-games, certificate system, hint box, easter-egg teaser,
+updated copy). `src/data/items.ts` is unchanged. Legal/about/contact/disclaimer pages remain
+unaffected other than automatically inheriting the correct canonical domain through the
+Layout.astro fix.
 ---
 
 ## 8. Decision Log
@@ -243,6 +283,15 @@ Researched against the live competitive set (see sources below) rather than gues
 
 **Sources checked this pass:** spendelonmoney.org, onlinegames.io/spend-elon-musk-money, spendmoneyelonmusk.com, spendmoneygame.com, spend-elon-fortune.com, spendelonmuskmoney.org, spendelonmusk.money, spend-elon-money.com.
 
+Elon Musk's name is deliberately retained in the page `<title>`, meta description, and H1/H2
+copy even though the actual gameplay has grown well beyond a single-character spend-simulator
+— the on-page copy now explicitly says the game "started as a simple 'spend Elon Musk's money'
+idea and has grown into its own little universe," which keeps the original high-intent keyword
+for SEO while being honest about scope. Revisit this framing if/when a second character page
+(`/spend-jeff-bezos-billions` etc.) ships, since at that point the homepage copy may want to
+lean harder into the "How Rich Is Too Rich" brand name as the primary identity and Elon Musk
+as the flagship character rather than the whole product.
+
 ---
 
 ## 10. Working Agreement with Claude
@@ -255,3 +304,34 @@ Researched against the live competitive set (see sources below) rather than gues
 ---
 
 **Next step:** Phase 2.5 (design pass) or Phase 3 (SEO content) — say which and we'll generate the actual updated files.
+
+---
+ 
+## Bug fix — Layout.astro prop compatibility (affects all pages)
+ 
+The rebuilt `Layout.astro` originally required a full `canonicalUrl` string prop. Your
+existing legal pages (`privacy-policy.astro`, `disclaimer.astro`, `terms.astro`, `about.astro`,
+`contact.astro`, `404.astro`, `500.astro`) call `<Layout path="/disclaimer">` etc. — a
+different, shorter prop. Fixed: `Layout.astro` now accepts **either** `path` (canonical built
+from `astro.config.mjs`'s `site`) **or** `canonicalUrl` (full override). Both forms now work
+without touching the legal pages themselves.
+ 
+---
+
+---
+ 
+## Domain decision
+ 
+**Real domain purchased: how-rich-is-too-rich.com.** Updated:
+- `astro.config.mjs` → `site: 'https://how-rich-is-too-rich.com'`
+- `public/robots.txt` → sitemap URL now points at the real domain
+- `src/pages/index.astro` → passes `path="/"` to Layout (resolves against the config above)
+- Receipt/certificate canvas footers print `location.hostname` at runtime rather than a
+  hardcoded string, so they're correct on any deploy target (localhost while testing, the
+  real domain once live) without further edits.
+**Still needed from you (Claude can't do these):**
+1. Complete the domain purchase/registration.
+2. Point DNS at Cloudflare Pages once the project is deployed there (Phase 4).
+3. Update `og-image.png` in `/public` if you want a custom social preview image — currently a
+   placeholder path.
+---
