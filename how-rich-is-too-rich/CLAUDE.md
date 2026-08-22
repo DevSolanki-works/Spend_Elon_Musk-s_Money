@@ -236,9 +236,8 @@ behind email capture, forced waiting, or paid mechanics.
 - [x] Custom `404.astro` / `500.astro`.
 - [x] Substantial original content: 600+ word SEO block + FAQ with JSON-LD schema on the
       homepage.
-- [ ] **No broken links / all pages reachable from every page** — currently **fails**: the
-      homepage has no footer, so a first-time visitor landing on `/` has no visible path to
-      the legal pages. Fix before applying to AdSense (Priority 1 below).
+- [x] **No broken links / all pages reachable from every page** — `<Footer />` is now rendered
+      on `index.astro`, so every legal page is reachable from the homepage.
 - [ ] Site should have some real traffic/history before applying — brand-new domains with zero
       content history are a common soft-rejection reason (Phase 4, not started).
 
@@ -263,8 +262,14 @@ behind email capture, forced waiting, or paid mechanics.
    (b) migrate `index.astro`'s hardcoded Elon Musk framing back to read from character JSON so
    a second character really is just a data change. Recommend (a) unless a second character
    page is an active near-term goal.
-2. **Hint/time-achievement persistence** — currently session-only (resets on reload). Decide
-   if it's worth persisting via `localStorage` so a returning visitor doesn't lose progress.
+   **Status (Aug 22, 2026): parked, not decided.** Not an active goal right now, but not
+   ruled out either — dead files (`Header.astro`, `CategoryIcon.astro`, `characters.ts`,
+   `characters/elon-musk.json`, `Game.astro`, `shop-items.json`) are being left in place for
+    now rather than deleted. Revisit this before doing a broader cleanup pass.
+2. ~~Hint/time-achievement persistence~~ — **Resolved.** Session start, unlocked hint
+    minutes, and the 100-min achievement flag now persist via `localStorage`
+    (`hritr:session-start`, `hritr:unlocked-hint-minutes`, `hritr:time-achievement-unlocked`).
+    A refresh no longer resets the clock.
 3. **Homepage footer** — needs to be added; open question is whether to reuse the existing
    `Footer.astro` as-is or give the homepage a themed (Carnival Poster) footer variant to match
    the rest of the page instead of the plain one used on legal pages.

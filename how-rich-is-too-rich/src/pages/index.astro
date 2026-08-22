@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Footer from '../components/Footer.astro';
 import { ITEMS, CATEGORY_ORDER } from '../data/items';
 import { STARTING_NET_WORTH, formatUsd } from '../lib/gameEngine';
 
@@ -222,6 +223,8 @@ const description =
       </p>
     </article>
   </main>
+
+  <Footer />
 
   <!-- ============ HINT BOX ============ -->
   <button id="hint-toggle" type="button" class="brutal ticket-stub fixed bottom-4 left-4 z-40 hidden rounded-full px-4 py-2 font-display text-xs font-bold" style="--accent:#1a1508">
@@ -1358,6 +1361,9 @@ const description =
     });
 
     // ---------- Timed hint box (15/30/45/60/80 min hints, 100-min achievement) ----------
+    // Persisted across refresh: session start time, which hints are already
+    // unlocked, and whether the achievement already fired all live in
+    // localStorage, so reloading the page no longer resets the clock.
     const HINT_SCHEDULE: { minutes: number; text: string }[] = [
       { minutes: 15, text: 'The header title isn\u2019t just decoration. Try clicking it several times, fast.' },
       { minutes: 30, text: 'That \u201c$\u201d logo up top might enjoy a few quick taps too.' },
@@ -1366,7 +1372,56 @@ const description =
       { minutes: 80, text: 'Not every secret word is about celebrating \u2014 one is about opening something. Try typing what you\u2019d want to open for a prize.' },
     ];
     const TIME_ACHIEVEMENT_MINUTES = 100;
-    const unlockedHints: string[] = [];
+    const SESSION_START_KEY = 'hritr:session-start';
+    const UNLOCKED_HINTS_KEY = 'hritr:unlocked-hint-minutes';
+    const TIME_ACHIEVEMENT_KEY = 'hritr:time-achievement-unlocked';
+
+    function readSessionStart(): number {
+      try {
+        const stored = localStorage.getItem(SESSION_START_KEY);
+        if (stored) return Number(stored);
+        const now = Date.now();
+        localStorage.setItem(SESSION_START_KEY, String(now));
+        return now;
+      } catch {
+        return Date.now(); // localStorage unavailable — falls back to session-only timing
+      }
+    }
+    function readUnlockedMinutes(): number[] {
+      try {
+        const stored = localStorage.getItem(UNLOCKED_HINTS_KEY);
+        return stored ? (JSON.parse(stored) as number[]) : [];
+      } catch {
+        return [];
+      }
+    }
+    function persistUnlockedMinutes(minutes: number[]) {
+      try {
+        localStorage.setItem(UNLOCKED_HINTS_KEY, JSON.stringify(minutes));
+      } catch {
+        /* localStorage unavailable — hints just won't persist across reloads */
+      }
+    }
+    function readTimeAchievementUnlocked(): boolean {
+      try {
+        return localStorage.getItem(TIME_ACHIEVEMENT_KEY) === '1';
+      } catch {
+        return false;
+      }
+    }
+    function persistTimeAchievementUnlocked() {
+      try {
+        localStorage.setItem(TIME_ACHIEVEMENT_KEY, '1');
+      } catch {
+        /* localStorage unavailable — achievement just won't persist across reloads */
+      }
+    }
+
+    const sessionStart = readSessionStart();
+    const unlockedMinutes = new Set(readUnlockedMinutes());
+    const unlockedHints: string[] = HINT_SCHEDULE.filter((h) => unlockedMinutes.has(h.minutes)).map((h) => h.text);
+    let timeAchievementUnlocked = readTimeAchievementUnlocked();
+
     const hintToggle = document.getElementById('hint-toggle')!;
     const hintPanel = document.getElementById('hint-panel')!;
     const hintList = document.getElementById('hint-list')!;
@@ -1375,34 +1430,50 @@ const description =
     function renderHints() {
       hintCount.textContent = String(unlockedHints.length);
       hintList.innerHTML = unlockedHints.map((h) => `<li>\u2022 ${h}</li>`).join('');
+      hintToggle.classList.toggle('hidden', unlockedHints.length === 0);
     }
-    function unlockHint(text: string) {
-      unlockedHints.push(text);
+    // `announce` is false when restoring a hint that was already earned before a
+    // refresh — no need to re-toast or re-chime something the player already saw.
+    function unlockHint(hint: { minutes: number; text: string }, announce: boolean) {
+      if (unlockedMinutes.has(hint.minutes)) return;
+      unlockedMinutes.add(hint.minutes);
+      persistUnlockedMinutes([...unlockedMinutes]);
+      unlockedHints.push(hint.text);
       renderHints();
-      hintToggle.classList.remove('hidden');
-      showToast('💡 New hint unlocked!');
-      playClick();
+      if (announce) {
+        showToast('💡 New hint unlocked!');
+        playClick();
+      }
     }
+    renderHints();
     hintToggle.addEventListener('click', () => {
       hintPanel.classList.toggle('hidden');
     });
 
-    let timeAchievementUnlocked = false;
-    function scheduleHints() {
-      HINT_SCHEDULE.forEach((h) => {
-        setTimeout(() => unlockHint(h.text), h.minutes * 60 * 1000);
+    function fireTimeAchievement() {
+      if (timeAchievementUnlocked) return;
+      timeAchievementUnlocked = true;
+      persistTimeAchievementUnlocked();
+      openCertificate({
+        emoji: '⏱️',
+        title: 'Time Traveler',
+        subtitle: 'Awarded for spending',
+        statValue: '100 minutes',
+        extra: 'exploring How Rich Is Too Rich',
       });
-      setTimeout(() => {
-        if (timeAchievementUnlocked) return;
-        timeAchievementUnlocked = true;
-        openCertificate({
-          emoji: '⏱️',
-          title: 'Time Traveler',
-          subtitle: 'Awarded for spending',
-          statValue: '100 minutes',
-          extra: 'exploring How Rich Is Too Rich',
-        });
-      }, TIME_ACHIEVEMENT_MINUTES * 60 * 1000);
+    }
+
+    function scheduleHints() {
+      const elapsedMs = Date.now() - sessionStart;
+      for (const h of HINT_SCHEDULE) {
+        const dueInMs = h.minutes * 60 * 1000 - elapsedMs;
+        if (dueInMs <= 0) unlockHint(h, false); // already earned before this load — restore quietly
+        else setTimeout(() => unlockHint(h, true), dueInMs);
+      }
+
+      const achievementDueInMs = TIME_ACHIEVEMENT_MINUTES * 60 * 1000 - elapsedMs;
+      if (achievementDueInMs <= 0) fireTimeAchievement();
+      else setTimeout(fireTimeAchievement, achievementDueInMs);
     }
     scheduleHints();
 
