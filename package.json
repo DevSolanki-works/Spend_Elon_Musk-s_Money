@@ -1,0 +1,9 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "postinstall": "cd how-rich-is-too-rich && npm install",
+    "build": "cd how-rich-is-too-rich && npm run build",
+    "test": "cd how-rich-is-too-rich && npm run test"
+  }
+}
