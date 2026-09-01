@@ -1429,7 +1429,12 @@ const description =
 
     function renderHints() {
       hintCount.textContent = String(unlockedHints.length);
-      hintList.innerHTML = unlockedHints.map((h) => `<li>\u2022 ${h}</li>`).join('');
+      hintList.innerHTML = '';
+      for (const h of unlockedHints) {
+        const li = document.createElement('li');
+        li.textContent = `\u2022 ${h}`;
+        hintList.appendChild(li);
+      }
       hintToggle.classList.toggle('hidden', unlockedHints.length === 0);
     }
     // `announce` is false when restoring a hint that was already earned before a
