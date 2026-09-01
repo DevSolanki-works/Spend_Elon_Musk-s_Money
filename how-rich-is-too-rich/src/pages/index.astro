@@ -465,18 +465,18 @@ const description =
       const start = performance.now();
       function frame(now: number) {
         const elapsed = now - start;
-        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        ctx?.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
         for (const p of pieces) {
           p.x += p.vx; p.y += p.vy; p.rot += p.vr;
-          ctx.save();
-          ctx.translate(p.x, p.y);
-          ctx.rotate(p.rot);
-          ctx.fillStyle = p.color;
-          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-          ctx.restore();
+          ctx?.save();
+          ctx?.translate(p.x, p.y);
+          ctx?.rotate(p.rot);
+          ctx!.fillStyle = p.color;
+          ctx?.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx?.restore();
         }
         if (elapsed < 2400) requestAnimationFrame(frame);
-        else ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        else ctx?.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
       }
       requestAnimationFrame(frame);
     }
@@ -799,9 +799,9 @@ const description =
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      ctx.fillStyle = '#fff4de';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#1a1508';
+      ctx!.fillStyle = '#fff4de';
+      ctx?.fillRect(0, 0, canvas.width, canvas.height);
+      ctx!.fillStyle = '#1a1508';
       ctx.textAlign = 'center';
       ctx.font = 'bold 22px sans-serif';
       ctx.fillText('SPENDING RECEIPT', canvas.width / 2, 60);
@@ -828,10 +828,10 @@ const description =
       const sorted = [...totals.values()].sort((a, b) => b.total - a.total).slice(0, 12);
       for (const t of sorted) {
         ctx.textAlign = 'left';
-        ctx.fillStyle = '#1a1508';
+        ctx!.fillStyle = '#1a1508';
         ctx.fillText(t.name.slice(0, 38), 40, y);
         ctx.textAlign = 'right';
-        ctx.fillStyle = t.total < 0 ? '#16a34a' : '#1a1508';
+        ctx!.fillStyle = t.total < 0 ? '#16a34a' : '#1a1508';
         ctx.fillText(`${t.total < 0 ? '+' : '-'}${formatUsd(Math.abs(t.total))}`, canvas.width - 40, y);
         y += 24;
       }
@@ -843,15 +843,15 @@ const description =
       ctx.setLineDash([]);
 
       ctx.font = 'bold 18px sans-serif';
-      ctx.fillStyle = '#1a1508';
+      ctx!.fillStyle = '#1a1508';
       ctx.textAlign = 'left';
       ctx.fillText('TOTAL SPENT', 40, y + 45);
       ctx.textAlign = 'right';
-      ctx.fillStyle = '#e11d3c';
+      ctx!.fillStyle = '#e11d3c';
       ctx.fillText(formatUsd(amountSpent(state)), canvas.width - 40, y + 45);
 
       ctx.textAlign = 'center';
-      ctx.fillStyle = '#1a1508';
+      ctx!.fillStyle = '#1a1508';
       ctx.font = '12px monospace';
       ctx.fillText('Played at howrichistoorich.com', canvas.width / 2, canvas.height - 30);
 
@@ -1245,8 +1245,8 @@ const description =
       canvas.height = 700;
       const ctx = canvas.getContext('2d')!;
 
-      ctx.fillStyle = '#FFF4DE';
-      ctx.fillRect(0, 0, 1000, 700);
+      ctx!.fillStyle = '#FFF4DE';
+      ctx?.fillRect(0, 0, 1000, 700);
 
       const grad = ctx.createLinearGradient(0, 0, 1000, 700);
       grad.addColorStop(0, '#FFC630');
@@ -1263,36 +1263,36 @@ const description =
       ctx.font = '90px sans-serif';
       ctx.fillText(cert.emoji, 500, 150);
 
-      ctx.fillStyle = '#1A1508';
+      ctx!.fillStyle = '#1A1508';
       ctx.font = 'bold 26px sans-serif';
       ctx.fillText('CERTIFICATE OF ACHIEVEMENT', 500, 205);
 
-      ctx.fillStyle = '#E0328B';
+      ctx!.fillStyle = '#E0328B';
       ctx.font = 'bold 42px sans-serif';
       wrapText(ctx, cert.title, 500, 275, 820, 50);
 
-      ctx.fillStyle = '#1A1508';
+      ctx!.fillStyle = '#1A1508';
       ctx.font = '22px sans-serif';
       ctx.fillText(cert.subtitle, 500, 400);
 
-      ctx.fillStyle = '#16A34A';
+      ctx!.fillStyle = '#16A34A';
       ctx.font = 'bold 46px monospace';
       ctx.fillText(cert.statValue, 500, 455);
 
       if (cert.extra) {
-        ctx.fillStyle = '#1A1508';
+        ctx!.fillStyle = '#1A1508';
         ctx.font = '18px sans-serif';
         ctx.fillText(cert.extra, 500, 490);
       }
 
-      ctx.fillStyle = 'rgba(26,21,8,0.6)';
+      ctx!.fillStyle = 'rgba(26,21,8,0.6)';
       ctx.font = '14px monospace';
       ctx.fillText(new Date().toLocaleDateString(), 500, 545);
 
-      ctx.fillStyle = '#1A1508';
+      ctx!.fillStyle = '#1A1508';
       ctx.font = 'bold 22px sans-serif';
       ctx.fillText(location.hostname || 'howrichistoorich.com', 500, 605);
-      ctx.fillStyle = 'rgba(26,21,8,0.6)';
+      ctx!.fillStyle = 'rgba(26,21,8,0.6)';
       ctx.font = '14px sans-serif';
       ctx.fillText('Think you can beat this? Play now.', 500, 630);
 

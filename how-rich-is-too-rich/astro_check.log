@@ -1,0 +1,174 @@
+11:48:51 [types] Generated 95ms
+11:48:51 [check] Getting diagnostics for Astro files in /app/how-rich-is-too-rich...
+[96msrc/components/Game.astro[0m:[93m564[0m:[93m30[0m - [91merror[0m[90m ts(2339): [0mProperty 'purchases' does not exist on type 'GameState'.
+
+[7m564[0m     const sorted = [...state.purchases].sort((a, b) => b.price * b.qty - a.price * a.qty).slice(0, 10);
+[7m   [0m [91m                             ~~~~~~~~~[0m
+[96msrc/components/Game.astro[0m:[93m501[0m:[93m7[0m - [91merror[0m[90m ts(2322): [0mType '"secret"' is not assignable to type 'Category'.
+
+[7m501[0m       category: "secret",
+[7m   [0m [91m      ~~~~~~~~[0m
+[96msrc/components/Game.astro[0m:[93m472[0m:[93m20[0m - [91merror[0m[90m ts(2339): [0mProperty 'blurb' does not exist on type 'ShopItem'.
+
+[7m472[0m     showToast(item.blurb);
+[7m   [0m [91m                   ~~~~~[0m
+[96msrc/components/Game.astro[0m:[93m428[0m:[93m38[0m - [91merror[0m[90m ts(2554): [0mExpected 1 arguments, but got 2.
+
+[7m428[0m     const tier = getSpendTier(total, state.startingBalance);
+[7m   [0m [91m                                     ~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/Game.astro[0m:[93m426[0m:[93m46[0m - [91merror[0m[90m ts(7006): [0mParameter 'p' implicitly has an 'any' type.
+
+[7m426[0m     const boughtMama = state.purchases.some((p) => p.id === "your-mama");
+[7m   [0m [91m                                             ~[0m
+[96msrc/components/Game.astro[0m:[93m426[0m:[93m30[0m - [91merror[0m[90m ts(2339): [0mProperty 'purchases' does not exist on type 'GameState'.
+
+[7m426[0m     const boughtMama = state.purchases.some((p) => p.id === "your-mama");
+[7m   [0m [91m                             ~~~~~~~~~[0m
+[96msrc/components/Game.astro[0m:[93m417[0m:[93m9[0m - [91merror[0m[90m ts(18047): [0m'ctx' is possibly 'null'.
+
+[7m417[0m         ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+[7m   [0m [91m        ~~~[0m
+[96msrc/components/Game.astro[0m:[93m412[0m:[93m9[0m - [91merror[0m[90m ts(18047): [0m'ctx' is possibly 'null'.
+
+[7m412[0m         ctx.restore();
+[7m   [0m [91m        ~~~[0m
+[96msrc/components/Game.astro[0m:[93m411[0m:[93m9[0m - [91merror[0m[90m ts(18047): [0m'ctx' is possibly 'null'.
+
+[7m411[0m         ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+[7m   [0m [91m        ~~~[0m
+[96msrc/components/Game.astro[0m:[93m410[0m:[93m9[0m - [91merror[0m[90m ts(18047): [0m'ctx' is possibly 'null'.
+
+[7m410[0m         ctx.fillStyle = p.color;
+[7m   [0m [91m        ~~~[0m
+[96msrc/components/Game.astro[0m:[93m409[0m:[93m9[0m - [91merror[0m[90m ts(18047): [0m'ctx' is possibly 'null'.
+
+[7m409[0m         ctx.rotate(p.rot);
+[7m   [0m [91m        ~~~[0m
+[96msrc/components/Game.astro[0m:[93m408[0m:[93m9[0m - [91merror[0m[90m ts(18047): [0m'ctx' is possibly 'null'.
+
+[7m408[0m         ctx.translate(p.x, p.y);
+[7m   [0m [91m        ~~~[0m
+[96msrc/components/Game.astro[0m:[93m407[0m:[93m9[0m - [91merror[0m[90m ts(18047): [0m'ctx' is possibly 'null'.
+
+[7m407[0m         ctx.save();
+[7m   [0m [91m        ~~~[0m
+[96msrc/components/Game.astro[0m:[93m402[0m:[93m7[0m - [91merror[0m[90m ts(18047): [0m'ctx' is possibly 'null'.
+
+[7m402[0m       ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+[7m   [0m [91m      ~~~[0m
+[96msrc/components/Game.astro[0m:[93m354[0m:[93m29[0m - [91merror[0m[90m ts(2339): [0mProperty 'purchases' does not exist on type 'GameState'.
+
+[7m354[0m       for (const p of state.purchases) {
+[7m   [0m [91m                            ~~~~~~~~~[0m
+[96msrc/components/Game.astro[0m:[93m350[0m:[93m15[0m - [91merror[0m[90m ts(2339): [0mProperty 'purchases' does not exist on type 'GameState'.
+
+[7m350[0m     if (state.purchases.length === 0) {
+[7m   [0m [91m              ~~~~~~~~~[0m
+[96msrc/components/Game.astro[0m:[93m345[0m:[93m74[0m - [91merror[0m[90m ts(2554): [0mExpected 1 arguments, but got 2.
+
+[7m345[0m     spendTierEl.textContent = total > 0 ? `Status: ${getSpendTier(total, state.startingBalance)}` : "";
+[7m   [0m [91m                                                                         ~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/Game.astro[0m:[93m202[0m:[93m33[0m - [91merror[0m[90m ts(2352): [0mConversion of type '{ id: string; name: string; emoji: string; price: number; category: string; blurb: string; }[]' to type 'ShopItem[]' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'flavor' is missing in type '{ id: string; name: string; emoji: string; price: number; category: string; blurb: string; }' but required in type 'ShopItem'.
+
+[7m202[0m   const shopItems: ShopItem[] = shopItemsData as ShopItem[];
+[7m   [0m [91m                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/Game.astro[0m:[93m188[0m:[93m66[0m - [91merror[0m[90m ts(2305): [0mModule '"../lib/gameEngine"' has no exported member 'getComparisons'.
+
+[7m188[0m     getItemCount, getTopPurchase, formatFullUSD, formatShortUSD, getComparisons,
+[7m   [0m [91m                                                                 ~~~~~~~~~~~~~~[0m
+[96msrc/components/Game.astro[0m:[93m188[0m:[93m50[0m - [91merror[0m[90m ts(2305): [0mModule '"../lib/gameEngine"' has no exported member 'formatShortUSD'.
+
+[7m188[0m     getItemCount, getTopPurchase, formatFullUSD, formatShortUSD, getComparisons,
+[7m   [0m [91m                                                 ~~~~~~~~~~~~~~[0m
+[96msrc/components/Game.astro[0m:[93m188[0m:[93m35[0m - [91merror[0m[90m ts(2724): [0m'"../lib/gameEngine"' has no exported member named 'formatFullUSD'. Did you mean 'formatUsd'?
+
+[7m188[0m     getItemCount, getTopPurchase, formatFullUSD, formatShortUSD, getComparisons,
+[7m   [0m [91m                                  ~~~~~~~~~~~~~[0m
+[96msrc/components/Game.astro[0m:[93m188[0m:[93m19[0m - [91merror[0m[90m ts(2305): [0mModule '"../lib/gameEngine"' has no exported member 'getTopPurchase'.
+
+[7m188[0m     getItemCount, getTopPurchase, formatFullUSD, formatShortUSD, getComparisons,
+[7m   [0m [91m                  ~~~~~~~~~~~~~~[0m
+[96msrc/components/Game.astro[0m:[93m187[0m:[93m47[0m - [91merror[0m[90m ts(2305): [0mModule '"../lib/gameEngine"' has no exported member 'getTotalSpent'.
+
+[7m187[0m     createGameState, resetGame, purchaseItem, getTotalSpent, getMaxAffordableQty,
+[7m   [0m [91m                                              ~~~~~~~~~~~~~[0m
+[96msrc/components/Game.astro[0m:[93m187[0m:[93m33[0m - [91merror[0m[90m ts(2724): [0m'"../lib/gameEngine"' has no exported member named 'purchaseItem'. Did you mean 'purchase'?
+
+[7m187[0m     createGameState, resetGame, purchaseItem, getTotalSpent, getMaxAffordableQty,
+[7m   [0m [91m                                ~~~~~~~~~~~~[0m
+[96msrc/components/Game.astro[0m:[93m187[0m:[93m22[0m - [91merror[0m[90m ts(2305): [0mModule '"../lib/gameEngine"' has no exported member 'resetGame'.
+
+[7m187[0m     createGameState, resetGame, purchaseItem, getTotalSpent, getMaxAffordableQty,
+[7m   [0m [91m                     ~~~~~~~~~[0m
+[96msrc/components/Game.astro[0m:[93m187[0m:[93m5[0m - [91merror[0m[90m ts(2305): [0mModule '"../lib/gameEngine"' has no exported member 'createGameState'.
+
+[7m187[0m     createGameState, resetGame, purchaseItem, getTotalSpent, getMaxAffordableQty,
+[7m   [0m [91m    ~~~~~~~~~~~~~~~[0m
+[96msrc/components/Game.astro[0m:[93m33[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m33[0m   <script type="application/json" id="game-data" set:html={JSON.stringify({
+[7m  [0m [93m          ~~~~[0m
+
+[96msrc/layouts/Layout.astro[0m:[93m73[0m:[93m17[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m73[0m         <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+[7m  [0m [93m                ~~~~[0m
+
+[96msrc/pages/index.astro[0m:[93m479[0m:[93m14[0m - [91merror[0m[90m ts(18047): [0m'ctx' is possibly 'null'.
+
+[7m479[0m         else ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+[7m   [0m [91m             ~~~[0m
+[96msrc/pages/index.astro[0m:[93m476[0m:[93m11[0m - [91merror[0m[90m ts(18047): [0m'ctx' is possibly 'null'.
+
+[7m476[0m           ctx.restore();
+[7m   [0m [91m          ~~~[0m
+[96msrc/pages/index.astro[0m:[93m475[0m:[93m11[0m - [91merror[0m[90m ts(18047): [0m'ctx' is possibly 'null'.
+
+[7m475[0m           ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+[7m   [0m [91m          ~~~[0m
+[96msrc/pages/index.astro[0m:[93m474[0m:[93m11[0m - [91merror[0m[90m ts(18047): [0m'ctx' is possibly 'null'.
+
+[7m474[0m           ctx.fillStyle = p.color;
+[7m   [0m [91m          ~~~[0m
+[96msrc/pages/index.astro[0m:[93m473[0m:[93m11[0m - [91merror[0m[90m ts(18047): [0m'ctx' is possibly 'null'.
+
+[7m473[0m           ctx.rotate(p.rot);
+[7m   [0m [91m          ~~~[0m
+[96msrc/pages/index.astro[0m:[93m472[0m:[93m11[0m - [91merror[0m[90m ts(18047): [0m'ctx' is possibly 'null'.
+
+[7m472[0m           ctx.translate(p.x, p.y);
+[7m   [0m [91m          ~~~[0m
+[96msrc/pages/index.astro[0m:[93m471[0m:[93m11[0m - [91merror[0m[90m ts(18047): [0m'ctx' is possibly 'null'.
+
+[7m471[0m           ctx.save();
+[7m   [0m [91m          ~~~[0m
+[96msrc/pages/index.astro[0m:[93m468[0m:[93m9[0m - [91merror[0m[90m ts(18047): [0m'ctx' is possibly 'null'.
+
+[7m468[0m         ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+[7m   [0m [91m        ~~~[0m
+[96msrc/pages/index.astro[0m:[93m1069[0m:[93m9[0m - [93mwarning[0m[90m ts(6133): [0m'dblStaked' is declared but its value is never read.
+
+[7m1069[0m     let dblStaked = 0;
+[7m    [0m [93m        ~~~~~~~~~[0m
+[96msrc/pages/index.astro[0m:[93m356[0m:[93m7[0m - [93mwarning[0m[90m ts(6133): [0m'percentSpent' is declared but its value is never read.
+
+[7m356[0m       percentSpent,
+[7m   [0m [93m      ~~~~~~~~~~~~[0m
+[96msrc/pages/index.astro[0m:[93m350[0m:[93m21[0m - [93mwarning[0m[90m ts(6133): [0m'CATEGORY_ORDER' is declared but its value is never read.
+
+[7m350[0m     import { ITEMS, CATEGORY_ORDER } from '../data/items';
+[7m   [0m [93m                    ~~~~~~~~~~~~~~[0m
+
+Result (18 files):
+- 34 errors
+- 0 warnings
+- 5 hints
