@@ -2,6 +2,6 @@
   "name": "how-rich-is-too-rich-root",
   "private": true,
   "scripts": {
-    "build": "cd how-rich-is-too-rich && npm install && npm run build"
+    "build": "cd how-rich-is-too-rich && npm ci && npm run build"
   }
 }
