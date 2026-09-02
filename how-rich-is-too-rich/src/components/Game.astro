@@ -346,7 +346,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   }
 
   function renderReceipt() {
-    receiptList.querySelectorAll("[data-line]").forEach((el) => el.remove());
+    receiptList.replaceChildren(receiptEmpty);
     if (state.purchases.length === 0) {
       receiptEmpty.classList.remove("hidden");
     } else {
