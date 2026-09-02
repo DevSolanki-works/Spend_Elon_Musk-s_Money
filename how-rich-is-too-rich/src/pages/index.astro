@@ -586,9 +586,11 @@ const description =
     }
 
     // ---------- Category tabs ----------
-    document.querySelectorAll('.tab-btn').forEach((tab) => {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const shopCards = document.querySelectorAll<HTMLElement>('.shop-card');
+    tabBtns.forEach((tab) => {
       tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach((t) => {
+        tabBtns.forEach((t) => {
           t.setAttribute('aria-pressed', 'false');
           t.classList.remove('bg-amber', 'text-ink');
           t.classList.add('bg-void-raised', 'text-ink/70');
@@ -597,7 +599,7 @@ const description =
         tab.classList.add('bg-amber', 'text-ink');
         tab.classList.remove('bg-void-raised', 'text-ink/70');
         activeCategory = tab.getAttribute('data-category') || 'all';
-        document.querySelectorAll<HTMLElement>('.shop-card').forEach((card) => {
+        shopCards.forEach((card) => {
           const show = activeCategory === 'all' || card.dataset.category === activeCategory;
           card.classList.toggle('hidden', !show);
         });
