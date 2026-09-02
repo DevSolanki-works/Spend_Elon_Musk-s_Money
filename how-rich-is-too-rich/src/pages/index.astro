@@ -353,7 +353,7 @@ const description =
       purchase,
       applyDelta,
       reset as resetState,
-      percentSpent,
+
       percentRemaining,
       canAfford,
       getMaxAffordableQty,
@@ -431,9 +431,9 @@ const description =
     }
     function playSad() { tone(220, 0.3, 'sawtooth', 0.08); }
 
-    document.getElementById('sound-toggle')?.addEventListener('click', () => {
+    document.getElementById('sound-toggle')?.addEventListener('click', (e) => {
       soundOn = !soundOn;
-      const btn = document.getElementById('sound-toggle') as HTMLButtonElement;
+      const btn = e.currentTarget as HTMLButtonElement;
       btn.textContent = soundOn ? '🔊' : '🔇';
       if (soundOn) playClick();
     });
@@ -447,6 +447,7 @@ const description =
     const confettiCanvas = document.getElementById('confetti-canvas') as HTMLCanvasElement;
     function fireConfetti() {
       const ctx = confettiCanvas.getContext('2d');
+        if (!ctx) return;
       if (!ctx) return;
       confettiCanvas.width = window.innerWidth;
       confettiCanvas.height = window.innerHeight;
@@ -586,9 +587,11 @@ const description =
     }
 
     // ---------- Category tabs ----------
-    document.querySelectorAll('.tab-btn').forEach((tab) => {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const shopCards = document.querySelectorAll<HTMLElement>('.shop-card');
+    tabBtns.forEach((tab) => {
       tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach((t) => {
+        tabBtns.forEach((t) => {
           t.setAttribute('aria-pressed', 'false');
           t.classList.remove('bg-amber', 'text-ink');
           t.classList.add('bg-void-raised', 'text-ink/70');
@@ -597,7 +600,7 @@ const description =
         tab.classList.add('bg-amber', 'text-ink');
         tab.classList.remove('bg-void-raised', 'text-ink/70');
         activeCategory = tab.getAttribute('data-category') || 'all';
-        document.querySelectorAll<HTMLElement>('.shop-card').forEach((card) => {
+        shopCards.forEach((card) => {
           const show = activeCategory === 'all' || card.dataset.category === activeCategory;
           card.classList.toggle('hidden', !show);
         });
@@ -1066,7 +1069,7 @@ const description =
     const dblCashoutBtn = document.getElementById('dbl-cashout') as HTMLButtonElement;
     let dblPot = 0;
     let dblStreak = 0;
-    let dblStaked = 0;
+
 
     function openDouble() {
       dblStakeScreen.classList.remove('hidden');
