@@ -1,0 +1,8 @@
+{
+  "name": "how-rich-is-too-rich-root",
+  "private": true,
+  "scripts": {
+    "install": "cd how-rich-is-too-rich && npm install",
+    "build": "cd how-rich-is-too-rich && npm run build"
+  }
+}
