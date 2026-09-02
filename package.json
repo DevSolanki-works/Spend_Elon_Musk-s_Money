@@ -1,1 +1,9 @@
-{"name": "root", "private": true, "scripts": {"install": "cd how-rich-is-too-rich && npm install", "build": "cd how-rich-is-too-rich && npm run build"}}
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "postinstall": "cd how-rich-is-too-rich && npm install",
+    "build": "cd how-rich-is-too-rich && npm run build && cd .. && rm -rf dist && cp -r how-rich-is-too-rich/dist ./dist",
+    "test": "cd how-rich-is-too-rich && npm run test"
+  }
+}
