@@ -431,9 +431,9 @@ const description =
     }
     function playSad() { tone(220, 0.3, 'sawtooth', 0.08); }
 
-    document.getElementById('sound-toggle')?.addEventListener('click', () => {
+    document.getElementById('sound-toggle')?.addEventListener('click', (e) => {
       soundOn = !soundOn;
-      const btn = document.getElementById('sound-toggle') as HTMLButtonElement;
+      const btn = e.currentTarget as HTMLButtonElement;
       btn.textContent = soundOn ? '🔊' : '🔇';
       if (soundOn) playClick();
     });
