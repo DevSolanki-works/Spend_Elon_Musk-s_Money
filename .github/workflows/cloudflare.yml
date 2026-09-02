@@ -1,0 +1,20 @@
+name: Cloudflare Pages
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+      - name: Install dependencies
+        working-directory: ./how-rich-is-too-rich
+        run: npm ci
+      - name: Build
+        working-directory: ./how-rich-is-too-rich
+        run: npm run build

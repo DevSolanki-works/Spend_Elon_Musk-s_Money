@@ -504,7 +504,6 @@ const CATEGORY_COLORS: Record<string, string> = {
     handlePurchase(mama, 1);
   });
 
-  const allShopCards = shopGrid.querySelectorAll<HTMLElement>(".shop-card");
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       tabs.forEach((t) => {
@@ -514,7 +513,7 @@ const CATEGORY_COLORS: Record<string, string> = {
       tab.classList.add("bg-amber", "text-ink");
       tab.classList.remove("bg-void-raised", "text-ink/70");
       const cat = tab.dataset.category;
-      allShopCards.forEach((card) => {
+      shopGrid.querySelectorAll<HTMLElement>(".shop-card").forEach((card) => {
         if (card.id === "secret-card") return; // secret stays wherever its unlock state left it
         const show = cat === "all" || card.dataset.category === cat;
         card.classList.toggle("hidden", !show);
