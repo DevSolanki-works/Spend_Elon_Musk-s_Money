@@ -353,7 +353,7 @@ const description =
       purchase,
       applyDelta,
       reset as resetState,
-      percentSpent,
+
       percentRemaining,
       canAfford,
       getMaxAffordableQty,
@@ -447,6 +447,7 @@ const description =
     const confettiCanvas = document.getElementById('confetti-canvas') as HTMLCanvasElement;
     function fireConfetti() {
       const ctx = confettiCanvas.getContext('2d');
+        if (!ctx) return;
       if (!ctx) return;
       confettiCanvas.width = window.innerWidth;
       confettiCanvas.height = window.innerHeight;
@@ -1068,7 +1069,7 @@ const description =
     const dblCashoutBtn = document.getElementById('dbl-cashout') as HTMLButtonElement;
     let dblPot = 0;
     let dblStreak = 0;
-    let dblStaked = 0;
+
 
     function openDouble() {
       dblStakeScreen.classList.remove('hidden');
