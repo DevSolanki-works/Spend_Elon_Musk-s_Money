@@ -1,5 +1,0 @@
-🧪 Add formatUsd test coverage
-
-🎯 **What:** The formatUsd function in src/lib/gameEngine.ts was lacking unit tests to cover its core functionality and edge cases.
-📊 **Coverage:** The test suite now covers base values (under 1K), thousands, millions, billions, trillions, negative values, and boundary values around scaling cutoffs.
-✨ **Result:** A newly configured Vitest testing environment with 100% test coverage implemented for formatUsd ensuring reliable formatting across scales.
