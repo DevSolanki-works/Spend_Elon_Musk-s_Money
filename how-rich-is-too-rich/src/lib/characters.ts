@@ -43,10 +43,10 @@ export function getRoutableCharacters(): Character[] {
 
 export function formatUSD(amount: number): string {
   if (amount >= 1_000_000_000) {
-    return `$${(amount / 1_000_000_000).toFixed(amount % 1_000_000_000 === 0 ? 0 : 1)}B`;
+    return `${(amount / 1_000_000_000).toFixed(amount % 1_000_000_000 === 0 ? 0 : 1)}B`;
   }
   if (amount >= 1_000_000) {
-    return `$${(amount / 1_000_000).toFixed(amount % 1_000_000 === 0 ? 0 : 1)}M`;
+    return `${(amount / 1_000_000).toFixed(amount % 1_000_000 === 0 ? 0 : 1)}M`;
   }
-  return `$${amount.toLocaleString("en-US")}`;
+  return `${amount.toLocaleString("en-US")}`;
 }
