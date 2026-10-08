@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+:root {
+  --background: #faf9f6;
+  --surface: #ffffff;
+  --surface-subtle: #f2f0eb;
+  --foreground: #141413;
+  --foreground-muted: #575653;
+  --foreground-subtle: #787774;
+  --border-subtle: #e4e2dd;
+  --border-strong: #c8c5be;
+  --accent-primary: #1d4ed8;
+  --accent-hover: #1e40af;
+  --accent-soft: #eff6ff;
+  --accent-border: #bfdbfe;
+  --status-good-bg: #ecfdf5;
+  --status-good-text: #065f46;
+  --status-good-border: #a7f3d0;
+  --status-warn-bg: #fffbeb;
+  --status-warn-text: #92400e;
+  --status-warn-border: #fde68a;
+}
+
+html.dark {
+  --background: #111110;
+  --surface: #1a1918;
+  --surface-subtle: #232220;
+  --foreground: #f0efea;
+  --foreground-muted: #a3a29c;
+  --foreground-subtle: #787772;
+  --border-subtle: #2c2b29;
+  --border-strong: #44433f;
+  --accent-primary: #3b82f6;
+  --accent-hover: #60a5fa;
+  --accent-soft: #172554;
+  --accent-border: #1e3a8a;
+  --status-good-bg: #064e3b;
+  --status-good-text: #a7f3d0;
+  --status-good-border: #065f46;
+  --status-warn-bg: #451a03;
+  --status-warn-text: #fde68a;
+  --status-warn-border: #78350f;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-foreground-subtle: var(--foreground-subtle);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-border: var(--accent-border);
+  --font-sans: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Remove default triangle on details summary when custom indicator is used */
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
